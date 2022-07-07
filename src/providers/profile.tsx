@@ -10,6 +10,7 @@ import { getItem, removeItem, setItem } from 'utils/localStorage'
 export interface ProfileContextProps {
   profile: UniversalProfile
   requestProfile: () => Promise<UniversalProfile | undefined>
+  removeProfile: () => Promise<void>
   isLoading: boolean
 }
 
@@ -71,6 +72,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     }
   }, [web3, getProfile])
 
+  const removeProfile = useCallback(async () => {
+    setProfile(undefined)
+    removeItem('profileAddress')
+  }, [])
+
   useEffect(() => {
     if (!profile) {
       const address = getItem('profileAddress') as string
@@ -84,9 +90,10 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     () => ({
       profile,
       requestProfile,
+      removeProfile,
       isLoading
     }),
-    [profile, isLoading, requestProfile]
+    [profile, isLoading, removeProfile, requestProfile]
   )
 
   return <ProfileContext.Provider value={context}>{children}</ProfileContext.Provider>
