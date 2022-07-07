@@ -21,6 +21,7 @@
     "@headlessui/react": "^1.4.1",
     "@lukso/lsp-factory.js": "^2.3.1",
     "@lukso/lsp-smart-contracts": "^0.6.1",
+    "@rive-app/react-canvas": "^3.0.15",
     "@samuelmeuli/font-manager": "^1.4.0",
     "classnames": "^2.3.1",
     "next": "^12.2.0",

@@ -206,7 +206,7 @@ const Landing = () => (
             </div>
           </div>
           <div className="mt-12 border-t border-gray-200 py-8">
-            <p className="text-base text-gray-400 xl:text-center">
+            <p className="text-base text-sm text-gray-400 xl:text-center">
               &copy; 2022 Relayer Service. All rights reserved.
             </p>
           </div>

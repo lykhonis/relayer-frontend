@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useProfile } from './useProfile'
-import { useWeb3 } from './useWeb3'
+import useProfile from './useProfile'
+import useWeb3 from './useWeb3'
 
 const useBalance = ({ address }: { address?: string | undefined } = {}) => {
   const web3 = useWeb3()

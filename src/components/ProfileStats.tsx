@@ -1,7 +1,7 @@
 import { Tooltip } from '@apideck/components'
 import usePrice from 'hooks/usePrice'
-import { useProfile } from 'hooks/useProfile'
-import { useWeb3 } from 'hooks/useWeb3'
+import useProfile from 'hooks/useProfile'
+import useWeb3 from 'hooks/useWeb3'
 import { ReactNode, useEffect, useState } from 'react'
 import { formatLyx } from 'utils/lyx'
 
@@ -32,7 +32,7 @@ const ProfileStats = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      if (web3 && profile?.address) {
+      if (web3 && profile?.address && formatPrice) {
         const transactionCount = await web3.eth.getTransactionCount(profile.address)
         const balance = await web3.eth.getBalance(profile.address)
         const balanceTotal = price ? formatPrice(balance, price, currencySymbol) : undefined

@@ -1,4 +1,4 @@
-import { useProfile } from 'hooks/useProfile'
+import useProfile from 'hooks/useProfile'
 import { findBestProfileImage } from 'utils/profileImage'
 import { ipfsToHttp } from 'utils/ipfs'
 import { Button } from '@apideck/components'
@@ -19,7 +19,7 @@ const ProfileDetails = () => {
   })
   const balance = useBalance()
   return (
-    <div>
+    <div className="pb-4">
       <div>
         <img
           className="h-32 w-full object-cover lg:h-48"
