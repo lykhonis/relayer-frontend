@@ -83,6 +83,7 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
                   <Button
                     onClick={requestProfile}
                     isLoading={isLoading}
+                    disabled={isLoading}
                     className="whitespace-nowrap ml-4"
                   >
                     Sign In

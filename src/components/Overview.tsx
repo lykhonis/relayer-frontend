@@ -9,10 +9,8 @@ const Overview = () => {
         <ProfileDetails />
         <ProfileQuota />
       </div>
-      <div className="mt-4 grid grid-cols-1 gap-4 items-start lg:gap-8">
-        <div className="grid grid-cols-1 gap-4">
-          <ProfileStats />
-        </div>
+      <div className="mt-4">
+        <ProfileStats />
       </div>
     </div>
   )

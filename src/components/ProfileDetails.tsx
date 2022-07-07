@@ -3,8 +3,6 @@ import { findBestProfileImage } from 'utils/profileImage'
 import { ipfsToHttp } from 'utils/ipfs'
 import { Button } from '@apideck/components'
 import { useRouter } from 'next/router'
-import useBalance from 'hooks/useBalance'
-import { formatLyx } from 'utils/lyx'
 
 const ProfileDetails = () => {
   const router = useRouter()
@@ -17,7 +15,6 @@ const ProfileDetails = () => {
     images: profile?.backgroundImage,
     minimumWidth: 250
   })
-  const balance = useBalance()
   return (
     <div className="pb-4">
       <div>
@@ -40,14 +37,9 @@ const ProfileDetails = () => {
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
               <h1 className="text-2xl font-bold text-gray-900 truncate">{profile?.name ?? ''}</h1>
             </div>
-            {balance && (
-              <div className="hidden sm:block sm:mt-6 flex flex-col justify-stretch space-y-3 whitespace-nowrap text-sm font-bold text-gray-500 truncate">
-                {formatLyx(balance)}
-              </div>
-            )}
             <div className="mt-4 sm:mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
               <Button className="whitespace-nowrap" onClick={() => router.push('/deposit')}>
-                Deposit
+                Increase Quota
               </Button>
             </div>
           </div>

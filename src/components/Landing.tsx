@@ -122,7 +122,7 @@ const Landing = () => (
           </div>
         </div>
       </main>
-      <footer className="bg-gray-50" aria-labelledby="footer-heading">
+      <footer className="bg-white" aria-labelledby="footer-heading">
         <h2 id="footer-heading" className="sr-only">
           Footer
         </h2>
@@ -204,11 +204,6 @@ const Landing = () => (
                 </div>
               </div>
             </div>
-          </div>
-          <div className="mt-12 border-t border-gray-200 py-8">
-            <p className="text-base text-sm text-gray-400 xl:text-center">
-              &copy; 2022 Relayer Service. All rights reserved.
-            </p>
           </div>
         </div>
       </footer>
