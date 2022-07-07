@@ -6,8 +6,8 @@ export const findBestProfileImage = ({
   minimumHeight
 }: {
   images: ImageMetadata[] | undefined
-  minimumWidth: number | undefined
-  minimumHeight: number | undefined
+  minimumWidth?: number
+  minimumHeight?: number
 }) => {
   if (!images?.length) {
     return null

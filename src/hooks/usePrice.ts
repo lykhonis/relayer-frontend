@@ -1,0 +1,49 @@
+import { useEffect, useState } from 'react'
+import BN from 'bn.js'
+import Web3 from 'web3'
+
+const formatPrice = (wei: string | BN, price: string | number, currencySymbol?: string) => {
+  const amount = new BN(Web3.utils.fromWei(wei, 'ether')).toNumber()
+  const totalCents = Math.abs(Number(price) * 100)
+  const full = Math.abs((amount * totalCents) / 100)
+  const cents = (amount * totalCents) % 100
+  const formatted = cents === 0 ? `${full}` : `${full}.${cents < 10 ? '0' : ''}${cents}`
+  if (currencySymbol) {
+    return `${currencySymbol}${formatted}`
+  } else {
+    return formatted
+  }
+}
+
+const usePrice = () => {
+  const [price, setPrice] = useState<string>()
+  useEffect(() => {
+    const fetchPrice = async () => {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=lukso-token&vs_currencies=usd',
+        {
+          method: 'GET',
+          headers: {
+            'Accept-Content': 'application/json'
+          }
+        }
+      )
+      if (response.ok) {
+        const data = await response.json()
+        const price = data?.['lukso-token']?.usd
+        return price
+      }
+    }
+    if (!price) {
+      fetchPrice().then((price) => setPrice(price))
+    }
+  }, [price])
+  return {
+    price,
+    currency: 'usd',
+    currencySymbol: '$',
+    formatPrice
+  }
+}
+
+export default usePrice

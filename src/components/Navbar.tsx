@@ -10,6 +10,7 @@ import { ipfsToHttp } from 'utils/ipfs'
 import { Transition, Popover } from '@headlessui/react'
 import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
+import useNetworkName from 'hooks/useNetworkName'
 
 export const Navbar = ({ children }: { children?: ReactNode }) => {
   const navbarNode = useRef() as RefObject<HTMLDivElement>
@@ -23,6 +24,7 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
     minimumHeight: 32
   })
   const { addToast } = useToast()
+  const networkName = useNetworkName()
   const clipboard = useClipboard()
   const handleCopyAddress = useCallback(() => {
     if (clipboard && profile?.address) {
@@ -71,7 +73,12 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
             <div className="hidden sm:block">
               <div className="flex items-center ml-4 md:ml-6">
                 {children}
-                <Chip size="small" label={`Testnet L16`} className="whitespace-nowrap" />
+                <Chip
+                  size="small"
+                  label={networkName ?? ''}
+                  className="whitespace-nowrap bg-gray-100 text-gray-600"
+                  colorClassName="gray"
+                />
                 {!profile ? (
                   <Button
                     onClick={requestProfile}
