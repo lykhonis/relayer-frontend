@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import useProfile from 'hooks/useProfile'
 import useNetwork from 'hooks/useNetwork'
-import { shortenAddress } from 'utils/shortenAddress'
+import { shortenHex } from 'utils/shortenHex'
 import { findBestProfileImage } from 'utils/profileImage'
 import { ipfsToHttp } from 'utils/ipfs'
 import { Transition, Popover } from '@headlessui/react'
@@ -105,7 +105,7 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
                         </span>
                       ) : (
                         <div className="whitespace-nowrap ml-4 text-sm font-medium">
-                          {shortenAddress(profile.address ?? '')}
+                          {shortenHex(profile.address ?? '')}
                         </div>
                       )}
                     </Popover.Button>
@@ -143,9 +143,9 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
                             </p>
                             <div className="flex flex-row">
                               <p className="text-sm text-gray-500 truncate">
-                                {shortenAddress(profile?.address ?? '')}
+                                {shortenHex(profile?.address ?? '')}
                               </p>
-                              <a className="ml-1" onClick={handleCopyAddress}>
+                              <a className="ml-1 cursor-pointer" onClick={handleCopyAddress}>
                                 <svg
                                   className="h-5 w-5 text-gray-500 hover:text-gray-900"
                                   width="24"
