@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, RefObject, useCallback, useRef, useState } from 'react'
+import { Fragment, RefObject, useCallback, useRef, useState } from 'react'
 import { Button, Chip } from '@apideck/components'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ import { Transition, Popover } from '@headlessui/react'
 import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
 
-export const Navbar = ({ children }: { children?: ReactNode }) => {
+export const Navbar = () => {
   const navbarNode = useRef() as RefObject<HTMLDivElement>
   const hamburgerNode = useRef() as RefObject<HTMLDivElement>
   const [navbarOpen, setNavbarOpen] = useState(false)
@@ -45,7 +45,7 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
               </Link>
             </div>
             {profile && (
-              <div className="hidden md:flex w-full justify-between">
+              <div className="hidden sm:flex w-full justify-between">
                 <div className="flex items-baseline">
                   <Link href={`/deposit`}>
                     <a
@@ -70,9 +70,18 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
             )}
           </div>
           <div>
+            {!profile && (
+              <Button
+                onClick={requestProfile}
+                isLoading={isLoading}
+                disabled={isLoading}
+                className="block sm:hidden whitespace-nowrap ml-4"
+              >
+                Sign In
+              </Button>
+            )}
             <div className="hidden sm:block">
               <div className="flex items-center ml-4 md:ml-6">
-                {children}
                 <Chip
                   size="small"
                   label={networkName ?? ''}
@@ -219,7 +228,7 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
         </div>
       </div>
       {profile && navbarOpen && (
-        <div className="block border-b border-gray-200 md:hidden" ref={navbarNode}>
+        <div className="block border-b border-gray-200 sm:hidden" ref={navbarNode}>
           <div className="px-2 py-3 sm:px-3">
             <Link href={`/deposit`}>
               <a
@@ -239,6 +248,16 @@ export const Navbar = ({ children }: { children?: ReactNode }) => {
                 Transactions
               </a>
             </Link>
+            <div className="border-t border-gray-200 mt-2 py-1" />
+            <a
+              className="cursor-pointer block px-3 py-2 mt-1 text-base font-semibold text-gray-900 rounded-md hover:text-primary-700 hover:bg-gray-100 focus:outline-none focus:text-primary-700 focus:bg-gray-100"
+              onClick={() => {
+                router.replace('/')
+                removeProfile?.()
+              }}
+            >
+              Sign Out
+            </a>
           </div>
         </div>
       )}
