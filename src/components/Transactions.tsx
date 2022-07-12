@@ -7,19 +7,20 @@ import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
 import { formatLyx } from 'utils/lyx'
 import useProfile from 'hooks/useProfile'
-import { definitions } from 'types/supabase'
 import useWeb3 from 'hooks/useWeb3'
 
-const PAGE_COUNT = 10
-const PAGE_NAVIGATION_STEP = 10
-
-type TransactionInfo = {
+type Transaction = {
   hash: string
   to?: string | null
   value?: string
   fee?: string
   status: 'unknown' | 'pending' | 'completed' | 'failed'
   createdAt: string
+}
+
+type TransactionPage = {
+  pageCount: number
+  transactions: Transaction[]
 }
 
 const Transactions = () => {
@@ -29,8 +30,8 @@ const Transactions = () => {
   const { addToast } = useToast()
   const clipboard = useClipboard()
 
-  const { data: transactions } = useSWR<TransactionInfo[]>(
-    web3 && profile?.address ? `/api/transactions?profile=${profile.address}` : null,
+  const { data } = useSWR<TransactionPage | undefined>(
+    web3 && profile?.address ? `/api/transactions?profile=${profile.address}&page=${page}` : null,
     async (url) => {
       const response = await fetch(url, {
         method: 'get',
@@ -38,56 +39,59 @@ const Transactions = () => {
       })
       if (response.ok) {
         const data = await response.json()
-        return await Promise.all(
-          data.transactions.map(async (transaction: definitions['tasks']) => {
-            const info: TransactionInfo = {
-              hash: transaction.transaction_hash,
-              status: transaction.status,
-              createdAt: transaction.created_at
-            }
-            const tx = await web3?.eth?.getTransaction(transaction.transaction_hash)
-            if (tx) {
-              info.to = tx.to
-              info.value = tx.value
-              info.fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(tx.gasPrice)).toString()
-              if (transaction.status === 'completed' || transaction.status === 'failed') {
-                const receipt = await web3?.eth?.getTransactionReceipt(transaction.transaction_hash)
-                if (receipt) {
-                  info.fee = Web3.utils
-                    .toBN(receipt.gasUsed)
-                    .mul(Web3.utils.toBN(tx.gasPrice))
-                    .toString()
+        return {
+          pageCount: data.pageCount,
+          transactions: await Promise.all(
+            data.transactions.map(async (data: any) => {
+              const info: Transaction = {
+                hash: data.transactionHash,
+                status: data.status,
+                createdAt: data.createdAt
+              }
+              const tx = await web3?.eth?.getTransaction(data.transactionHash)
+              if (tx) {
+                info.to = tx.to
+                info.value = tx.value
+                info.fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(tx.gasPrice)).toString()
+                if (data.status === 'completed' || data.status === 'failed') {
+                  const receipt = await web3?.eth?.getTransactionReceipt(data.transactionHash)
+                  if (receipt) {
+                    info.fee = Web3.utils
+                      .toBN(receipt.gasUsed)
+                      .mul(Web3.utils.toBN(tx.gasPrice))
+                      .toString()
+                  }
                 }
               }
-            }
-            return info
-          })
-        )
+              return info
+            })
+          )
+        }
       }
-      return []
     }
   )
 
-  const pageTotal = Math.ceil(transactions?.length ?? 0 / PAGE_COUNT)
+  const pageCount = Math.max(1, data?.pageCount ?? 1)
+  const pageTotal = Math.ceil(data?.transactions?.length ?? 0 / pageCount)
 
   const handlePrevious = useCallback(async () => setPage(page - 1), [page])
   const handleNext = useCallback(async () => setPage(page + 1), [page])
   const handleForward = useCallback(
-    async () => setPage(Math.min(Math.max(0, pageTotal - 1), page + PAGE_NAVIGATION_STEP)),
-    [page, pageTotal]
+    async () => setPage(Math.min(Math.max(0, pageTotal - 1), page + pageCount)),
+    [page, pageTotal, pageCount]
   )
   const handleBackward = useCallback(
-    async () => setPage(Math.max(0, page - PAGE_NAVIGATION_STEP)),
-    [page]
+    async () => setPage(Math.max(0, page - pageCount)),
+    [page, pageCount]
   )
 
   return (
     <div className="max-w-3xl mx-auto px-4 my-8 sm:px-6 lg:max-w-7xl lg:px-8">
       <div className="rounded-lg overflow-hidden shadow px-4 py-5 h-full">
         <ul role="list" className="divide-y divide-gray-200 overflow-hidden">
-          {transactions &&
-            transactions
-              .slice(page * PAGE_COUNT, Math.max(0, (page + 1) * PAGE_COUNT))
+          {data?.transactions &&
+            data.transactions
+              .slice(page * pageCount, Math.max(0, (page + 1) * pageCount))
               .map((transaction) => (
                 <li key={transaction.hash}>
                   <div className="px-4 py-4 sm:px-6">
@@ -205,7 +209,7 @@ const Transactions = () => {
               className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
               onClick={handleForward}
             >
-              {Math.min(Math.max(1, pageTotal), page + PAGE_NAVIGATION_STEP - 1)}
+              {Math.min(Math.max(1, pageTotal), page + pageCount - 1)}
             </a>
           </div>
           <div className="-mt-px w-0 flex-1 flex justify-end">
