@@ -82,7 +82,7 @@ const Transactions = () => {
   )
 
   return (
-    <div className="max-w-3xl mx-auto px-4 mt-8 sm:px-6 lg:max-w-7xl lg:px-8">
+    <div className="max-w-3xl mx-auto px-4 my-8 sm:px-6 lg:max-w-7xl lg:px-8">
       <div className="rounded-lg overflow-hidden shadow px-4 py-5 h-full">
         <ul role="list" className="divide-y divide-gray-200 overflow-hidden">
           {transactions &&
