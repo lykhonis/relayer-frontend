@@ -1,9 +1,11 @@
+import BN from 'bn.js'
 import classNames from 'classnames'
 import { shortenHex } from 'utils/shortenHex'
 import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
 import { formatLyx } from 'utils/lyx'
 import { useCallback, useState } from 'react'
+import Web3 from 'web3'
 
 const Transactions = () => {
   const transactions = []
@@ -14,7 +16,7 @@ const Transactions = () => {
         block: '286750',
         to: '0xb19dd19543724749c0032a19849a461d80e6a052',
         gas: '21000',
-        value: '0',
+        value: new BN('0').add(Web3.utils.toWei(new BN(i), 'ether')).toString(),
         status: 'confirmed',
         timestamp: new Date().getTime() / 1000
       },
@@ -56,7 +58,7 @@ const Transactions = () => {
       }
     )
   }
-  const pageCount = 2
+  const pageCount = 10
   const pageNavStep = 10
   const pageTotal = Math.ceil(transactions.length / pageCount)
   const [page, setPage] = useState(0)
@@ -103,7 +105,7 @@ const Transactions = () => {
                   <div className="mt-2 sm:flex sm:justify-between">
                     <div className="sm:flex">
                       <p className="flex items-center text-sm text-gray-500">
-                        {formatLyx(transaction.value)} &#8594; {shortenHex(transaction.to, 6)}
+                        &#8594; {shortenHex(transaction.to, 6)}
                         <a
                           className="ml-1 cursor-pointer"
                           onClick={() => {
@@ -131,7 +133,7 @@ const Transactions = () => {
                         </a>
                       </p>
                       <p className="flex items-center text-sm text-gray-500 sm:ml-2">
-                        Gas: {transaction.gas}
+                        {formatLyx(transaction.value)} Gas: {transaction.gas}
                       </p>
                     </div>
                     <div className="mt-2 flex items-center text-xs text-gray-500 sm:mt-0">
@@ -167,25 +169,25 @@ const Transactions = () => {
           </div>
           <div className="hidden md:-mt-px md:flex">
             <a
-              className="cursor-pointer border-transparent border-b-2 pb-2  text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
+              className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
               onClick={handleBackward}
             >
-              {Math.max(1, page)}
+              {page + 1}
             </a>
             <span className="border-transparent text-gray-500 px-4 inline-flex items-center text-sm font-medium">
               ...
             </span>
             <a
-              className="cursor-pointer border-transparent border-b-2 pb-2  text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
+              className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
               onClick={handleForward}
             >
-              {Math.min(pageTotal, page + pageNavStep)}
+              {Math.min(pageTotal, page + pageNavStep - 1)}
             </a>
           </div>
           <div className="-mt-px w-0 flex-1 flex justify-end">
             {page < pageTotal - 1 && (
               <a
-                className="cursor-pointer border-transparent border-b-2 pb-2  pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                className="cursor-pointer border-transparent border-b-2 pb-2 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 onClick={handleNext}
               >
                 Next

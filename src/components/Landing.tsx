@@ -105,7 +105,7 @@ const Landing = () => (
                   </h1>
                   <p className="text-base text-gray-300 sm:text-xl lg:text-lg xl:text-xl">
                     Sign in with Your Universal Profile (UP!) to start getting free transactions.
-                    Stale Your LYX to increase free transactions quota.
+                    Stake Your LYX to increase free transactions quota.
                   </p>
                 </div>
               </div>

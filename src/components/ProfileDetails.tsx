@@ -46,11 +46,11 @@ const ProfileDetails = () => {
             />
           </div>
           {profile?.address && (
-            <div className="flex text-md text-gray-500 items-center gap-1 mt-4 md:text-xl md:mt-0">
+            <div className="flex text-md text-gray-500 items-center gap-1 mt-4 md:text-lg md:mt-0">
               {shortenHex(profile?.address, 8)}
               <a className="ml-1 cursor-pointer" onClick={handleCopyAddress}>
                 <svg
-                  className="h-5 w-5 md:h-6 md:w-6 text-gray-500 hover:text-gray-900"
+                  className="h-5 w-5 text-gray-500 hover:text-gray-900"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -68,9 +68,6 @@ const ProfileDetails = () => {
             </div>
           )}
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-            <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 truncate">{profile?.name ?? ''}</h1>
-            </div>
             <div className="mt-4 sm:mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
               <Button className="whitespace-nowrap" onClick={() => router.push('/deposit')}>
                 Increase Quota
@@ -78,7 +75,7 @@ const ProfileDetails = () => {
             </div>
           </div>
         </div>
-        <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
+        <div className="hidden sm:block mt-6 min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-gray-900 truncate">{profile?.name ?? ''}</h1>
           <p className="text-gray-500 truncate">{profile?.description ?? ''}</p>
         </div>
