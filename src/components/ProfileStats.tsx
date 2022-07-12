@@ -33,7 +33,15 @@ const ProfileStats = () => {
   useEffect(() => {
     const fetchStats = async () => {
       if (web3 && profile?.address && formatPrice) {
-        const transactionCount = await web3.eth.getTransactionCount(profile.address)
+        let transactionCount
+        const response = await fetch(`/api/transactions?profile=${profile.address}&count=true`, {
+          method: 'get',
+          headers: { 'Accept-Type': 'application/json' }
+        })
+        if (response.ok) {
+          const data = await response.json()
+          transactionCount = data.count
+        }
         const balance = await web3.eth.getBalance(profile.address)
         const balanceTotal = price ? formatPrice(balance, price, currencySymbol) : undefined
         const stats = [
@@ -47,7 +55,7 @@ const ProfileStats = () => {
           },
           {
             name: Stats.TRANSACTION_COUNT,
-            value: transactionCount.toString()
+            value: transactionCount?.toString() ?? '…'
           }
         ]
         const currentBlockNumber = await web3.eth.getBlockNumber()

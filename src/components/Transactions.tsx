@@ -1,158 +1,182 @@
-import BN from 'bn.js'
+import { useCallback, useState } from 'react'
+import useSWR from 'swr'
+import Web3 from 'web3'
 import classNames from 'classnames'
 import { shortenHex } from 'utils/shortenHex'
 import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
 import { formatLyx } from 'utils/lyx'
-import { useCallback, useState } from 'react'
-import Web3 from 'web3'
+import useProfile from 'hooks/useProfile'
+import { definitions } from 'types/supabase'
+import useWeb3 from 'hooks/useWeb3'
+
+const PAGE_COUNT = 10
+const PAGE_NAVIGATION_STEP = 10
+
+type TransactionInfo = {
+  hash: string
+  to?: string | null
+  value?: string
+  fee?: string
+  status: 'unknown' | 'pending' | 'completed' | 'failed'
+  createdAt: string
+}
 
 const Transactions = () => {
-  const transactions = []
-  for (let i = 0; i < 10; i++) {
-    transactions.push(
-      {
-        hash: '0x10f7aa98e51f055cd5bd894fa635bf9f91a54ca10d7335b42af7682c57132048',
-        block: '286750',
-        to: '0xb19dd19543724749c0032a19849a461d80e6a052',
-        gas: '21000',
-        value: new BN('0').add(Web3.utils.toWei(new BN(i), 'ether')).toString(),
-        status: 'confirmed',
-        timestamp: new Date().getTime() / 1000
-      },
-      {
-        hash: '0x10f7aa98e51f055cd5bd894fa635bf9f91a54ca10d7335b42af7682c57132048',
-        block: '286750',
-        to: '0xb19dd19543724749c0032a19849a461d80e6a052',
-        gas: '21000',
-        value: '1250000000000000000',
-        status: 'reverted',
-        timestamp: new Date().getTime() / 1000
-      },
-      {
-        hash: '0x10f7aa98e51f055cd5bd894fa635bf9f91a54ca10d7335b42af7682c57132048',
-        block: '286750',
-        to: '0xb19dd19543724749c0032a19849a461d80e6a052',
-        gas: '21000',
-        value: '1000000000000000000',
-        status: 'confirmed',
-        timestamp: new Date().getTime() / 1000
-      },
-      {
-        hash: '0x10f7aa98e51f055cd5bd894fa635bf9f91a54ca10d7335b42af7682c57132048',
-        block: '286750',
-        to: '0xb19dd19543724749c0032a19849a461d80e6a052',
-        gas: '21000',
-        value: '0',
-        status: 'reverted',
-        timestamp: new Date().getTime() / 1000
-      },
-      {
-        hash: '0x10f7aa98e51f055cd5bd894fa635bf9f91a54ca10d7335b42af7682c57132048',
-        block: '286750',
-        to: '0xb19dd19543724749c0032a19849a461d80e6a052',
-        gas: '21000',
-        value: '3420000000000000000',
-        status: 'confirmed',
-        timestamp: new Date().getTime() / 1000
-      }
-    )
-  }
-  const pageCount = 10
-  const pageNavStep = 10
-  const pageTotal = Math.ceil(transactions.length / pageCount)
+  const { profile } = useProfile()
+  const web3 = useWeb3()
   const [page, setPage] = useState(0)
   const { addToast } = useToast()
   const clipboard = useClipboard()
+
+  const { data: transactions } = useSWR<TransactionInfo[]>(
+    web3 && profile?.address ? `/api/transactions?profile=${profile.address}` : null,
+    async (url) => {
+      const response = await fetch(url, {
+        method: 'get',
+        headers: { 'Accept-Type': 'application/json' }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        return await Promise.all(
+          data.transactions.map(async (transaction: definitions['tasks']) => {
+            const info: TransactionInfo = {
+              hash: transaction.transaction_hash,
+              status: transaction.status,
+              createdAt: transaction.created_at
+            }
+            const tx = await web3?.eth?.getTransaction(transaction.transaction_hash)
+            if (tx) {
+              info.to = tx.to
+              info.value = tx.value
+              info.fee = Web3.utils.toBN(tx.gas).mul(Web3.utils.toBN(tx.gasPrice)).toString()
+              if (transaction.status === 'completed' || transaction.status === 'failed') {
+                const receipt = await web3?.eth?.getTransactionReceipt(transaction.transaction_hash)
+                if (receipt) {
+                  info.fee = Web3.utils
+                    .toBN(receipt.gasUsed)
+                    .mul(Web3.utils.toBN(tx.gasPrice))
+                    .toString()
+                }
+              }
+            }
+            return info
+          })
+        )
+      }
+      return []
+    }
+  )
+
+  const pageTotal = Math.ceil(transactions?.length ?? 0 / PAGE_COUNT)
+
   const handlePrevious = useCallback(async () => setPage(page - 1), [page])
   const handleNext = useCallback(async () => setPage(page + 1), [page])
   const handleForward = useCallback(
-    async () => setPage(Math.min(pageTotal - 1, page + pageNavStep)),
+    async () => setPage(Math.min(Math.max(0, pageTotal - 1), page + PAGE_NAVIGATION_STEP)),
     [page, pageTotal]
   )
-  const handleBackward = useCallback(async () => setPage(Math.max(0, page - pageNavStep)), [page])
+  const handleBackward = useCallback(
+    async () => setPage(Math.max(0, page - PAGE_NAVIGATION_STEP)),
+    [page]
+  )
+
   return (
     <div className="max-w-3xl mx-auto px-4 mt-8 sm:px-6 lg:max-w-7xl lg:px-8">
       <div className="rounded-lg overflow-hidden shadow px-4 py-5 h-full">
         <ul role="list" className="divide-y divide-gray-200 overflow-hidden">
-          {transactions
-            .slice(page * pageCount, Math.max(0, (page + 1) * pageCount))
-            .map((transaction) => (
-              <li key={transaction.hash}>
-                <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-pointer text-sm font-medium text-primary-600 truncate hover:text-primary-900"
-                      href={`https://explorer.execution.l16.lukso.network/tx/${transaction.hash}`}
-                    >
-                      {transaction.hash}
-                    </a>
-                    <div className="ml-2 flex-shrink-0 flex">
-                      <p
-                        className={classNames(
-                          'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                          transaction.status === 'confirmed'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        )}
+          {transactions &&
+            transactions
+              .slice(page * PAGE_COUNT, Math.max(0, (page + 1) * PAGE_COUNT))
+              .map((transaction) => (
+                <li key={transaction.hash}>
+                  <div className="px-4 py-4 sm:px-6">
+                    <div className="flex items-center justify-between">
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-pointer text-sm font-medium text-primary-600 truncate hover:text-primary-900"
+                        href={`https://explorer.execution.l16.lukso.network/tx/${transaction.hash}`}
                       >
-                        {transaction.status}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-2 sm:flex sm:justify-between">
-                    <div className="sm:flex">
-                      <p className="flex items-center text-sm text-gray-500">
-                        &#8594; {shortenHex(transaction.to, 6)}
-                        <a
-                          className="ml-1 cursor-pointer"
-                          onClick={() => {
-                            if (clipboard) {
-                              clipboard.copy(transaction.to)
-                              addToast({ title: 'Copied', type: 'success' })
-                            }
-                          }}
+                        {transaction.hash}
+                      </a>
+                      <div className="ml-2 flex-shrink-0 flex">
+                        <p
+                          className={classNames(
+                            'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                            transaction.status === 'pending'
+                              ? 'bg-gray-100 text-gray-800'
+                              : transaction.status === 'completed'
+                              ? 'bg-green-100 text-green-800'
+                              : transaction.status === 'failed'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
+                          )}
                         >
-                          <svg
-                            className="h-4 w-4 text-gray-500 hover:text-gray-900"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            strokeWidth="2"
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" />
-                            <rect x="8" y="8" width="12" height="12" rx="2" />
-                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
-                          </svg>
-                        </a>
-                      </p>
-                      <p className="flex items-center text-sm text-gray-500 sm:ml-2">
-                        {formatLyx(transaction.value)} Gas: {transaction.gas}
-                      </p>
+                          {transaction.status}
+                        </p>
+                      </div>
                     </div>
-                    <div className="mt-2 flex items-center text-xs text-gray-500 sm:mt-0">
-                      <p>
-                        {new Date(transaction.timestamp * 1000).toLocaleString(undefined, {
-                          year: '2-digit',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          second: '2-digit',
-                          weekday: 'short'
-                        })}
-                      </p>
+                    <div className="mt-1 sm:flex sm:justify-between">
+                      <div className="flex flex-col">
+                        <p className="flex items-center text-sm text-gray-500">
+                          {transaction.to ? (
+                            <>
+                              &#8594; {shortenHex(transaction.to, 6)}
+                              <a
+                                className="ml-1 cursor-pointer"
+                                onClick={() => {
+                                  if (clipboard) {
+                                    clipboard.copy(transaction.to)
+                                    addToast({ title: 'Copied', type: 'success' })
+                                  }
+                                }}
+                              >
+                                <svg
+                                  className="h-4 w-4 text-gray-500 hover:text-gray-900"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="2"
+                                  stroke="currentColor"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path stroke="none" d="M0 0h24v24H0z" />
+                                  <rect x="8" y="8" width="12" height="12" rx="2" />
+                                  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+                                </svg>
+                              </a>
+                            </>
+                          ) : (
+                            <>&#8230;</>
+                          )}
+                        </p>
+                        <p className="mt-2 flex items-center text-xs text-gray-500">
+                          Value: {transaction.value ? formatLyx(transaction.value) : <>&#8230;</>}
+                        </p>
+                        <p className="flex items-center text-xs text-gray-500">
+                          Fee: {transaction.fee ? formatLyx(transaction.fee) : <>&#8230;</>}
+                        </p>
+                      </div>
+                      <div className="mt-2 flex items-start text-sm text-gray-500 sm:mt-0">
+                        <p>
+                          {new Date(transaction.createdAt).toLocaleString(undefined, {
+                            year: '2-digit',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            weekday: 'short'
+                          })}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ))}
         </ul>
       </div>
       <nav className="mt-10">
@@ -181,7 +205,7 @@ const Transactions = () => {
               className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
               onClick={handleForward}
             >
-              {Math.min(pageTotal, page + pageNavStep - 1)}
+              {Math.min(Math.max(1, pageTotal), page + PAGE_NAVIGATION_STEP - 1)}
             </a>
           </div>
           <div className="-mt-px w-0 flex-1 flex justify-end">

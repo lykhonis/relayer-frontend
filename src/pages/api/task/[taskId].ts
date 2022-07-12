@@ -8,7 +8,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const taskId = req.query.taskId as string
     const { data, error } = await supabase
       .from<definitions['tasks']>('tasks')
-      .select('id,status,transaction_hash')
+      .select('id,status')
+      .eq('uuid', taskId)
       .single()
     if (!data || error) {
       console.error(error?.message)
@@ -43,14 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json({
       success: true,
       taskId,
-      status:
-        data.status === 'failed'
-          ? 'FAILED'
-          : data.status === 'pending'
-          ? 'PENDING'
-          : data.status === 'completed'
-          ? 'COMPLETED'
-          : 'UNKNOWN'
+      status: data.status.toUpperCase()
     })
   } catch (e) {
     console.error(e)

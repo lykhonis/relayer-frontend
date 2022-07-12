@@ -10,10 +10,16 @@ CREATE TABLE IF NOT EXISTS public.tasks
     updated_at timestamp with time zone DEFAULT now(),
     uuid text COLLATE pg_catalog."default" NOT NULL CHECK (uuid = lower(uuid)),
     transaction_hash text COLLATE pg_catalog."default" NOT NULL CHECK (transaction_hash = lower(transaction_hash)),
-    status public.tasks_status NOT NULL DEFAULT 'unknown'
+    status public.tasks_status NOT NULL DEFAULT 'unknown',
+    key_manager text COLLATE pg_catalog."default" NOT NULL CHECK (key_manager = lower(key_manager)),
+    profile text COLLATE pg_catalog."default" CHECK (profile = lower(profile)),
+    CONSTRAINT tasks_uuid_key UNIQUE (uuid),
+    CONSTRAINT tasks_transaction_hash_key UNIQUE (transaction_hash)
 ) TABLESPACE pg_default;
 
 CREATE INDEX ON public.tasks (uuid);
+CREATE INDEX ON public.tasks (key_manager);
+CREATE INDEX ON public.tasks (profile);
 
 CREATE TRIGGER handle_tasks_updated_at
     BEFORE UPDATE 

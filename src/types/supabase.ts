@@ -12,111 +12,6 @@ export interface paths {
       }
     }
   }
-  '/tasks': {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          uuid?: parameters['rowFilter.tasks.uuid']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          /** Filtering Columns */
-          select?: parameters['select']
-          /** Ordering */
-          order?: parameters['order']
-          /** Limiting and Pagination */
-          offset?: parameters['offset']
-          /** Limiting and Pagination */
-          limit?: parameters['limit']
-        }
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters['range']
-          /** Limiting and Pagination */
-          'Range-Unit'?: parameters['rangeUnit']
-          /** Preference */
-          Prefer?: parameters['preferCount']
-        }
-      }
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions['tasks'][]
-        }
-        /** Partial Content */
-        206: unknown
-      }
-    }
-    post: {
-      parameters: {
-        body: {
-          /** tasks */
-          tasks?: definitions['tasks']
-        }
-        query: {
-          /** Filtering Columns */
-          select?: parameters['select']
-        }
-        header: {
-          /** Preference */
-          Prefer?: parameters['preferReturn']
-        }
-      }
-      responses: {
-        /** Created */
-        201: unknown
-      }
-    }
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          uuid?: parameters['rowFilter.tasks.uuid']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-        }
-        header: {
-          /** Preference */
-          Prefer?: parameters['preferReturn']
-        }
-      }
-      responses: {
-        /** No Content */
-        204: never
-      }
-    }
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          uuid?: parameters['rowFilter.tasks.uuid']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-        }
-        body: {
-          /** tasks */
-          tasks?: definitions['tasks']
-        }
-        header: {
-          /** Preference */
-          Prefer?: parameters['preferReturn']
-        }
-      }
-      responses: {
-        /** No Content */
-        204: never
-      }
-    }
-  }
   '/staked_token': {
     get: {
       parameters: {
@@ -216,9 +111,135 @@ export interface paths {
       }
     }
   }
+  '/tasks': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          uuid?: parameters['rowFilter.tasks.uuid']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
+          /** Filtering Columns */
+          select?: parameters['select']
+          /** Ordering */
+          order?: parameters['order']
+          /** Limiting and Pagination */
+          offset?: parameters['offset']
+          /** Limiting and Pagination */
+          limit?: parameters['limit']
+        }
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range']
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit']
+          /** Preference */
+          Prefer?: parameters['preferCount']
+        }
+      }
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['tasks'][]
+        }
+        /** Partial Content */
+        206: unknown
+      }
+    }
+    post: {
+      parameters: {
+        body: {
+          /** tasks */
+          tasks?: definitions['tasks']
+        }
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** Created */
+        201: unknown
+      }
+    }
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          uuid?: parameters['rowFilter.tasks.uuid']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** No Content */
+        204: never
+      }
+    }
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          uuid?: parameters['rowFilter.tasks.uuid']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
+        }
+        body: {
+          /** tasks */
+          tasks?: definitions['tasks']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** No Content */
+        204: never
+      }
+    }
+  }
 }
 
 export interface definitions {
+  staked_token: {
+    /** Format: bigint */
+    id: number
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    updated_at?: string
+    /** Format: text */
+    account: string
+    /** Format: text */
+    rewards: string
+  }
   tasks: {
     /** Format: bigint */
     id: number
@@ -244,24 +265,8 @@ export interface definitions {
     status: 'unknown' | 'pending' | 'completed' | 'failed'
     /** Format: text */
     key_manager: string
-  }
-  staked_token: {
-    /** Format: bigint */
-    id: number
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at: string
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    updated_at?: string
     /** Format: text */
-    account: string
-    /** Format: text */
-    rewards: string
+    profile?: string
   }
 }
 
@@ -298,6 +303,18 @@ export interface parameters {
   offset: string
   /** @description Limiting and Pagination */
   limit: string
+  /** @description staked_token */
+  'body.staked_token': definitions['staked_token']
+  /** Format: bigint */
+  'rowFilter.staked_token.id': string
+  /** Format: timestamp with time zone */
+  'rowFilter.staked_token.created_at': string
+  /** Format: timestamp with time zone */
+  'rowFilter.staked_token.updated_at': string
+  /** Format: text */
+  'rowFilter.staked_token.account': string
+  /** Format: text */
+  'rowFilter.staked_token.rewards': string
   /** @description tasks */
   'body.tasks': definitions['tasks']
   /** Format: bigint */
@@ -314,16 +331,6 @@ export interface parameters {
   'rowFilter.tasks.status': string
   /** Format: text */
   'rowFilter.tasks.key_manager': string
-  /** @description staked_token */
-  'body.staked_token': definitions['staked_token']
-  /** Format: bigint */
-  'rowFilter.staked_token.id': string
-  /** Format: timestamp with time zone */
-  'rowFilter.staked_token.created_at': string
-  /** Format: timestamp with time zone */
-  'rowFilter.staked_token.updated_at': string
   /** Format: text */
-  'rowFilter.staked_token.account': string
-  /** Format: text */
-  'rowFilter.staked_token.rewards': string
+  'rowFilter.tasks.profile': string
 }
