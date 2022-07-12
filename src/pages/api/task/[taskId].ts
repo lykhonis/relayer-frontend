@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { definitions } from 'types/supabase'
-import { method } from '../../../api/middleware/method'
-import { supabase } from '../../../api/utils/supabase'
-import { web3 } from '../../../api/utils/web3'
+import { method } from 'api/middleware/method'
+import { supabase } from 'api/utils/supabase'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -18,28 +17,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Invalid task'
       })
     }
-    if (data.status === 'pending') {
-      const receipt = await web3.eth.getTransactionReceipt(data.transaction_hash)
-      if (receipt) {
-        const { error } = await supabase
-          .from<definitions['tasks']>('tasks')
-          .update({ status: receipt.status ? 'completed' : 'failed' })
-          .eq('id', data.id)
-          .single()
-        if (error) {
-          console.error(error?.message)
-          return res.status(400).json({
-            success: false,
-            error: 'Internal'
-          })
-        }
-        return res.status(200).json({
-          success: true,
-          taskId,
-          status: receipt.status ? 'COMPLETED' : 'FAILED'
-        })
-      }
-    }
+    // TODO: oracles will observe pending tasks and update status
+    // if (data.status === 'pending') {
+    //   const receipt = await web3.eth.getTransactionReceipt(data.transaction_hash)
+    //   if (receipt) {
+    //     const { error } = await supabase
+    //       .from<definitions['tasks']>('tasks')
+    //       .update({ status: receipt.status ? 'completed' : 'failed' })
+    //       .eq('id', data.id)
+    //       .single()
+    //     if (error) {
+    //       console.error(error?.message)
+    //       return res.status(400).json({
+    //         success: false,
+    //         error: 'Internal'
+    //       })
+    //     }
+    //     return res.status(200).json({
+    //       success: true,
+    //       taskId,
+    //       status: receipt.status ? 'COMPLETED' : 'FAILED'
+    //     })
+    //   }
+    // }
     return res.status(200).json({
       success: true,
       taskId,

@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { definitions } from 'types/supabase'
 import { v4 as uuidv4 } from 'uuid'
-import { method } from '../../api/middleware/method'
-import { RelayTransactionParameters } from '../../api/types'
-import { executeRelayCall } from '../../api/utils/keyManager'
-import { supabase } from '../../api/utils/supabase'
+import { method } from 'api/middleware/method'
+import { RelayTransactionParameters } from 'api/types'
+import { executeRelayCall } from 'api/utils/keyManager'
+import { supabase } from 'api/utils/supabase'
 
 type RelayExecuteParameters = {
   keyManagerAddress: string
@@ -24,7 +24,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .insert({
         uuid: taskId,
         status: 'pending',
-        transaction_hash: transactionHash.toLowerCase()
+        transaction_hash: transactionHash.toLowerCase(),
+        key_manager: parameters.keyManagerAddress.toLowerCase()
       })
       .single()
     if (error) {
