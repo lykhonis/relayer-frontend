@@ -13,7 +13,8 @@
     "test": "jest",
     "test:watch": "jest --verbose --watch",
     "test:coverage": "jest --coverage",
-    "build-tailwind": "NODE_ENV=production npx tailwindcss build src/styles/tailwind.css -o public/styles/index.css"
+    "build-tailwind": "NODE_ENV=production npx tailwindcss build src/styles/tailwind.css -o public/styles/index.css",
+    "db:generate-types": "dotenv -- cross-var npx openapi-typescript \"%DATABASE_URL%/rest/v1/?apikey=%DATABASE_KEY%\" --prettier-config .prettierrc --output src/types/supabase.ts --version 2"
   },
   "dependencies": {
     "@apideck/components": "^0.11.1",
@@ -23,6 +24,7 @@
     "@lukso/lsp-smart-contracts": "^0.6.1",
     "@rive-app/react-canvas": "^3.0.15",
     "@samuelmeuli/font-manager": "^1.4.0",
+    "@supabase/supabase-js": "^1.35.4",
     "classnames": "^2.3.1",
     "next": "^12.2.0",
     "react": "17.0.2",
@@ -54,6 +56,8 @@
     "@vercel/node": "^1.12.1",
     "autoprefixer": "^10.4.7",
     "babel-jest": "^27.2.0",
+    "cross-var": "^1.1.0",
+    "dotenv-cli": "^6.0.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "^12.2.0",
     "eslint-config-prettier": "^8.3.0",

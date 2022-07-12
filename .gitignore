@@ -36,3 +36,7 @@ tsconfig.tsbuildinfo
 
 # local development assets
 public/dev/profiles
+
+# Supabase
+**/supabase/.branches
+**/supabase/.temp
