@@ -16,14 +16,19 @@ export const executeRelayCall = async ({
   keyManager,
   abi,
   nonce,
-  signature
-}: { web3: Web3; keyManager: string | Contract } & RelayTransactionParameters) => {
+  signature,
+  accountNonce
+}: {
+  web3: Web3
+  keyManager: string | Contract
+  accountNonce?: number
+} & RelayTransactionParameters) => {
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeData(web3)
   const contract = getContract(web3, keyManager)
   const method = contract.methods.executeRelayCall(signature, nonce, abi)
   const account = web3.eth.defaultAccount as string
   const gas = adjustGasEstimate(await method.estimateGas({ from: account }))
-  const txNonce = await web3.eth.getTransactionCount(account, 'latest')
+  const txNonce = accountNonce ?? (await web3.eth.getTransactionCount(account, 'latest'))
   const data = await web3.eth.accounts.signTransaction(
     {
       to: contract.options.address,

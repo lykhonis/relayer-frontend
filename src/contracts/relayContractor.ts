@@ -19,7 +19,7 @@ export const fee = async (web3: Web3) => {
   return Number(fee) / 1_000
 }
 
-export const execute = async (web3: Web3, profile: string, transaction: string) => {
+export const execute = async (web3: Web3, profile: string, transaction: string, nonce?: number) => {
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeData(web3)
   const contract = getContract(web3)
   const method = contract.methods.execute(profile, transaction)
@@ -28,6 +28,7 @@ export const execute = async (web3: Web3, profile: string, transaction: string) 
   return await method.send({
     from: account,
     gas,
+    nonce,
     maxFeePerGas,
     maxPriorityFeePerGas
   })

@@ -25,8 +25,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Insufficient funds'
       })
     }
+    const nonce = await web3.eth.getTransactionCount(web3.eth.defaultAccount as string, 'latest')
     const { transactionHash, send: sendRelayCallTx } = await executeRelayCall({
       web3,
+      accountNonce: nonce,
       keyManager: parameters.keyManagerAddress,
       ...parameters.transaction
     })
@@ -50,13 +52,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } else {
       const execute = async () => {
         try {
-          try {
-            console.log(`sending relay: ${transactionHash}`)
-            await sendRelayCallTx()
-          } finally {
-            console.log(`sending spend: ${transactionHash}`)
-            await executeTransactionSpending(web3, profile, transactionHash)
-          }
+          console.log(`sending relay: ${transactionHash}`)
+          await Promise.all([
+            sendRelayCallTx(),
+            executeTransactionSpending(web3, profile, transactionHash, nonce + 1)
+          ])
         } catch (e) {
           console.error(e)
           // mark tx failed
