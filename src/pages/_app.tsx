@@ -6,6 +6,7 @@ import { Web3Provider } from 'providers/web3'
 import { ProfileProvider } from 'providers/profile'
 import { NetworkProvider } from 'providers/network'
 import { PriceProvider } from 'providers/price'
+import { DepositProvider } from 'providers/deposit'
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   const getLayout = (Component as any).getLayout || ((page: ReactNode) => page)
@@ -15,7 +16,9 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
         <NetworkProvider>
           <ProfileProvider>
             <PriceProvider>
-              <ModalProvider>{getLayout(<Component {...pageProps} />)}</ModalProvider>
+              <DepositProvider>
+                <ModalProvider>{getLayout(<Component {...pageProps} />)}</ModalProvider>
+              </DepositProvider>
             </PriceProvider>
           </ProfileProvider>
         </NetworkProvider>

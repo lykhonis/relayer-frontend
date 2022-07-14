@@ -1,4 +1,4 @@
-import Deposit from 'components/Deposit'
+import Deposits from 'components/Deposits'
 import Footer from 'components/Footer'
 import Layout from 'components/Layout'
 import Loading from 'components/Loading'
@@ -10,7 +10,7 @@ const Page = () => {
   return (
     <Layout className="bg-white">
       <Navbar />
-      {profile ? <Deposit /> : isLoading ? <Loading /> : <></>}
+      {profile ? <Deposits /> : isLoading ? <Loading /> : <></>}
       <Footer />
     </Layout>
   )

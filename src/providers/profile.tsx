@@ -2,7 +2,7 @@ import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } f
 import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js'
 import LSP3 from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json'
 import { useToast } from '@apideck/components'
-import { UniversalProfile } from 'types/UniversalProfile'
+import { UniversalProfile } from 'types/common'
 import useWeb3 from 'hooks/useWeb3'
 import { Lukso } from 'utils/constants'
 import { getItem, removeItem, setItem } from 'utils/localStorage'

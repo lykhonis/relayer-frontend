@@ -9,3 +9,9 @@ export interface UniversalProfile {
   tags?: string[]
   address?: string
 }
+
+export interface RelayTransactionParameters {
+  abi: string
+  signature: string
+  nonce: number
+}

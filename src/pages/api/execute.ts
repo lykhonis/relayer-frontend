@@ -2,9 +2,11 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { definitions } from 'types/supabase'
 import { v4 as uuidv4 } from 'uuid'
 import { method } from 'api/middleware/method'
-import { RelayTransactionParameters } from 'api/types'
-import { executeRelayCall, getProfileAddress } from 'api/utils/keyManager'
+import { RelayTransactionParameters } from 'types/common'
+import { getProfileAddress } from 'contracts/keyManager'
 import { supabase } from 'api/utils/supabase'
+import { executeRelayCall, quota } from 'contracts/relayContractor'
+import { web3 } from 'api/utils/web3'
 
 type RelayExecuteParameters = {
   keyManagerAddress: string
@@ -14,15 +16,20 @@ type RelayExecuteParameters = {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const parameters = req.body as RelayExecuteParameters
-    // const taskId = '149c1b23-e85b-4f51-a314-34c2bec71770'
-    // const transactionHash = '0x060609fc3bf2d56b4fae7081d74615506228ae916f5ca79798e33106e887402e'
-    // const profile = '0x506Fb98634903CaaC59E2e02b955E13CaC0E3cBF'
     const taskId = uuidv4()
+    const profile = await getProfileAddress(web3, parameters.keyManagerAddress)
+    const { remaining: remainingQuota } = await quota(web3, profile)
+    if (remainingQuota.isZero()) {
+      return res.status(401).json({
+        success: false,
+        error: 'Insufficient funds'
+      })
+    }
     const { transactionHash } = await executeRelayCall({
+      web3,
       keyManager: parameters.keyManagerAddress,
       ...parameters.transaction
     })
-    const profile = await getProfileAddress(parameters.keyManagerAddress)
     const { error } = await supabase
       .from<definitions['tasks']>('tasks')
       .insert({
@@ -35,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .single()
     if (error) {
       console.error(error?.message)
-      return res.status(401).json({
+      return res.status(400).json({
         success: false,
         error: 'Internal'
       })

@@ -89,6 +89,9 @@ const Transactions = () => {
     <div className="max-w-3xl mx-auto px-4 my-8 sm:px-6 lg:max-w-7xl lg:px-8">
       <div className="rounded-lg overflow-hidden shadow px-4 py-5 h-full">
         <ul role="list" className="divide-y divide-gray-200 overflow-hidden">
+          {data?.transactions?.length === 0 && (
+            <p className="text-sm text-gray-500">No transactions</p>
+          )}
           {data?.transactions &&
             data.transactions
               .slice(page * pageCount, Math.max(0, (page + 1) * pageCount))
@@ -203,7 +206,7 @@ const Transactions = () => {
               {page + 1}
             </a>
             <span className="border-transparent text-gray-500 px-4 inline-flex items-center text-sm font-medium">
-              ...
+              &#8230;
             </span>
             <a
               className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"

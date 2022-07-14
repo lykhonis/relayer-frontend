@@ -10,10 +10,10 @@ export interface PriceContextProps {
 }
 
 const formatPrice = (wei: string | BN, price: string | number, currencySymbol?: string) => {
-  const amount = new BN(Web3.utils.fromWei(wei, 'ether')).toNumber()
-  const totalCents = Math.abs(Number(price) * 100)
-  const full = Math.abs((amount * totalCents) / 100)
-  const cents = (amount * totalCents) % 100
+  const amount = Number(Web3.utils.fromWei(wei, 'ether'))
+  const priceCents = Math.trunc(Number(price) * 100)
+  const full = Math.trunc((amount * priceCents) / 100)
+  const cents = Math.trunc((amount * priceCents) % 100)
   const formatted = cents === 0 ? `${full}` : `${full}.${cents < 10 ? '0' : ''}${cents}`
   if (currencySymbol) {
     return `${currencySymbol}${formatted}`

@@ -1,15 +1,12 @@
 import useProfile from 'hooks/useProfile'
 import { findBestProfileImage } from 'utils/profileImage'
 import { ipfsToHttp } from 'utils/ipfs'
-import { Button } from '@apideck/components'
-import { useRouter } from 'next/router'
 import { shortenHex } from 'utils/shortenHex'
 import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
 import { useCallback } from 'react'
 
 const ProfileDetails = () => {
-  const router = useRouter()
   const { profile } = useProfile()
   const profileImage = findBestProfileImage({
     images: profile?.profileImage,
@@ -67,13 +64,6 @@ const ProfileDetails = () => {
               </a>
             </div>
           )}
-          <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-            <div className="mt-4 sm:mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <Button className="whitespace-nowrap" onClick={() => router.push('/deposit')}>
-                Increase Quota
-              </Button>
-            </div>
-          </div>
         </div>
         <div className="hidden sm:block mt-6 min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-gray-900 truncate">{profile?.name ?? ''}</h1>

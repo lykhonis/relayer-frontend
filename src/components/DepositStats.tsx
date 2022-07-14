@@ -1,35 +1,45 @@
 import { Tooltip } from '@apideck/components'
+import useDeposit from 'hooks/useDeposit'
 import usePrice from 'hooks/usePrice'
 import { formatLyx } from 'utils/lyx'
 
 const DepositStats = () => {
   const { price, currencySymbol, formatPrice } = usePrice()
+  const deposit = useDeposit()
+
   const stats = [
     {
       name: 'Staking',
       value:
-        price && formatPrice ? (
-          <Tooltip text={formatPrice('0', price, currencySymbol)}>
-            {formatLyx('0', { suffix: 'sLYX' })}
+        price && formatPrice && deposit?.balances?.staked ? (
+          <Tooltip text={formatPrice(deposit.balances.staked, price, currencySymbol)}>
+            {formatLyx(deposit.balances.staked, { suffix: 'sLYX' })}
           </Tooltip>
         ) : (
-          formatLyx('0', { suffix: 'sLYX' })
+          <>&#8230; sLYX</>
         )
     },
     {
       name: 'Rewards',
       value:
-        price && formatPrice ? (
-          <Tooltip text={formatPrice('0', price, currencySymbol)}>
-            {formatLyx('0', { suffix: 'rLYX' })}
+        price && formatPrice && deposit?.balances?.rewards ? (
+          <Tooltip text={formatPrice(deposit.balances.rewards, price, currencySymbol)}>
+            {formatLyx(deposit.balances.rewards, { suffix: 'rLYX' })}
           </Tooltip>
         ) : (
-          formatLyx('0', { suffix: 'rLYX' })
+          <>&#8230; rLYX</>
         )
     },
     {
       name: 'Staking APR',
-      value: '8.05 %'
+      value:
+        deposit?.feePercent && deposit?.ratePercent ? (
+          <Tooltip text={`Includes platform fee of ${deposit.feePercent}%`}>
+            {Math.trunc(deposit.ratePercent * (100 - deposit.feePercent)) / 100} %
+          </Tooltip>
+        ) : (
+          <>&#8230; %</>
+        )
     }
   ]
   return (

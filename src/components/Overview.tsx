@@ -1,7 +1,6 @@
 import ProfileDetails from './ProfileDetails'
 import ProfileQuota from './ProfileQuota'
 import ProfileStats from './ProfileStats'
-import DepositStats from 'components/DepositStats'
 
 const Overview = () => {
   return (
@@ -12,9 +11,6 @@ const Overview = () => {
       </div>
       <div className="mt-4">
         <ProfileStats />
-      </div>
-      <div className="mt-4">
-        <DepositStats />
       </div>
     </div>
   )

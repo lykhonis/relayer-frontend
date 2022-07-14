@@ -41,7 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Invalid task'
       })
     }
-    if (count) {
+    if (needCount) {
       return res.status(200).json({ count })
     } else {
       return res.status(200).json({
