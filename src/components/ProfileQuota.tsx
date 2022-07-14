@@ -85,7 +85,7 @@ const ProfileQuota = () => {
           {quota?.needIncrease && (
             <Button
               className="whitespace-nowrap"
-              variant="danger"
+              variant="primary"
               size="small"
               onClick={handleIncreaseQuota}
               isLoading={loading}

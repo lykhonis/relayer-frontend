@@ -17,6 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .select('created_at,updated_at,status,transaction_hash,key_manager,profile', {
         count: needCount ? 'exact' : undefined
       })
+      .order('created_at', { ascending: false })
     if (!needCount) {
       query.range(page * pageCount, Math.max(0, (page + 1) * pageCount - 1))
     }

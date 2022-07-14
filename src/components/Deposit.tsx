@@ -75,8 +75,8 @@ const Deposit = () => {
   )
 
   return (
-    <div className="justify-center flex rounded-lg bg-white overflow-hidden shadow px-4 py-10">
-      <form className="py-5" onSubmit={onSubmit(handleSubmit)}>
+    <div className="justify-center flex rounded-lg bg-white overflow-hidden shadow px-4 pt-4 pb-10">
+      <form onSubmit={onSubmit(handleSubmit)}>
         <div className="text-center">
           <div className="mx-auto" style={{ width: '250px', height: '250px' }}>
             <Relayer />
