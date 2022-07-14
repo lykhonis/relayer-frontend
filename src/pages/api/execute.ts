@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Insufficient funds'
       })
     }
-    const { transactionHash } = await executeRelayCall({
+    const { transactionHash, send: sendRelayCallTx } = await executeRelayCall({
       web3,
       keyManager: parameters.keyManagerAddress,
       ...parameters.transaction
@@ -47,6 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Internal'
       })
     } else {
+      sendRelayCallTx()
       return res.status(200).json({
         success: true,
         taskId,

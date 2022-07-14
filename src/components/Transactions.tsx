@@ -72,7 +72,7 @@ const Transactions = () => {
   )
 
   const pageCount = Math.max(1, data?.pageCount ?? 1)
-  const pageTotal = Math.ceil(data?.transactions?.length ?? 0 / pageCount)
+  const pageTotal = Math.ceil((data?.transactions?.length ?? 0) / pageCount)
 
   const handlePrevious = useCallback(async () => setPage(page - 1), [page])
   const handleNext = useCallback(async () => setPage(page + 1), [page])
