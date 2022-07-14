@@ -8,8 +8,8 @@ import useProfile from 'hooks/useProfile'
 
 export interface DepositContextProps {
   balances: {
-    rewards: BN
-    staked: BN
+    rewards?: BN
+    staked?: BN
   }
   ratePercent: number
   feePercent: number
