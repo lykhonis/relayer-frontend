@@ -29,25 +29,13 @@ const ProfileQuota = () => {
         if (web3 && profile?.address) {
           const { remaining, used } = await relayQuota(web3, profile?.address)
           const balance = await rewardBalanceOf(web3, profile?.address)
-          const total = used.add(remaining)
-          const precision = 1_000
+          const y = new BN(1e10)
+          const yUsed = used.div(y).toNumber()
+          const yRemaining = remaining.div(y).toNumber()
+          const total = yUsed + yRemaining
           setQuota({
-            used: total.isZero()
-              ? 0
-              : Math.round(
-                  used
-                    .mul(new BN(100 * precision))
-                    .div(total)
-                    .toNumber() / precision
-                ),
-            remaining: total.isZero()
-              ? 0
-              : Math.round(
-                  remaining
-                    .mul(new BN(100 * precision))
-                    .div(total)
-                    .toNumber() / precision
-                ),
+            used: total === 0 ? 0 : (100 * yUsed) / total,
+            remaining: total === 0 ? 0 : (100 * yRemaining) / total,
             needIncrease: balance.gt(remaining)
           })
         }
@@ -107,7 +95,7 @@ const ProfileQuota = () => {
             </Button>
           )}
         </div>
-        <div className="h-4 flex flex-row overflow-hidden">
+        <div className="h-4 flex flex-row rounded-full overflow-hidden">
           {quota?.remaining && quota?.used ? (
             <>
               <span
@@ -120,17 +108,17 @@ const ProfileQuota = () => {
               ></span>
             </>
           ) : (
-            <span className="bg-gray-100 w-full rounded-full"></span>
+            <span className="bg-gray-100 w-full"></span>
           )}
         </div>
         <div className="flex flex-row gap-2 text-xs text-gray-500">
           <div className="p-2 flex flex-row items-baseline gap-1">
             <div className="w-2 h-2 rounded-full bg-primary-400"></div>
-            <div>{`Used ${quota?.used ?? 0}%`}</div>
+            <div>{`Used ${quota?.used?.toFixed(2) ?? 0}%`}</div>
           </div>
           <div className="py-2 flex flex-row items-baseline gap-1">
             <div className="w-2 h-2 rounded-full bg-green-400"></div>
-            <div>{`Remaining ${quota?.remaining ?? 0}%`}</div>
+            <div>{`Remaining ${quota?.remaining?.toFixed(2) ?? 0}%`}</div>
           </div>
         </div>
       </div>

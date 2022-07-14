@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS public.tasks
 CREATE INDEX ON public.tasks (uuid);
 CREATE INDEX ON public.tasks (key_manager);
 CREATE INDEX ON public.tasks (profile);
+CREATE INDEX ON public.tasks (transaction_hash);
 
 CREATE TRIGGER handle_tasks_updated_at
     BEFORE UPDATE 

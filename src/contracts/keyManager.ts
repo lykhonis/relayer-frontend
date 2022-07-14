@@ -22,7 +22,11 @@ export const executeRelayCall = async ({
   const method = contract.methods.executeRelayCall(nonce, abi, signature)
   const gas = adjustGasEstimate(await method.estimateGas())
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeData(web3)
-  return await method.send({ gas, maxFeePerGas, maxPriorityFeePerGas })
+  return await method.send({
+    gas,
+    maxFeePerGas,
+    maxPriorityFeePerGas
+  })
 }
 
 export const getProfileAddress = async (web3: Web3, keyManager: string | Contract) => {

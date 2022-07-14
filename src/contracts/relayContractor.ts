@@ -39,6 +39,15 @@ export const executeRelayCall = async ({
     nonce,
     abi
   )
-  const gas = adjustGasEstimate(await method.estimateGas())
-  return await method.send({ gas, maxFeePerGas, maxPriorityFeePerGas })
+  const gas = adjustGasEstimate(
+    await method.estimateGas({
+      from: web3.eth.defaultAccount
+    })
+  )
+  return await method.send({
+    from: web3.eth.defaultAccount,
+    gas,
+    maxFeePerGas,
+    maxPriorityFeePerGas
+  })
 }
