@@ -1,7 +1,5 @@
 import RelayContractor from './abi/RelayContractor.json'
-import { Contract } from 'web3-eth-contract'
 import { adjustGasEstimate, getFeeData } from 'api/utils/web3'
-import { RelayTransactionParameters } from 'types/common'
 import Web3 from 'web3'
 
 export const address = process.env.NEXT_PUBLIC_CONTRACT_RELAY_CONTRACTOR as string
@@ -21,35 +19,16 @@ export const fee = async (web3: Web3) => {
   return Number(fee) / 1_000
 }
 
-export const executeRelayCall = async ({
-  web3,
-  keyManager,
-  abi,
-  nonce,
-  signature
-}: {
-  web3: Web3
-  keyManager: string | Contract
-} & RelayTransactionParameters) => {
-  const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = await getFeeData(web3)
+export const execute = async (web3: Web3, profile: string, transaction: string) => {
+  const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeData(web3)
   const contract = getContract(web3)
-  const method = contract.methods.executeRelayCall(keyManager, gasPrice, signature, nonce, abi)
+  const method = contract.methods.execute(profile, transaction)
   const account = web3.eth.defaultAccount as string
   const gas = adjustGasEstimate(await method.estimateGas({ from: account }))
-  const txNonce = await web3.eth.getTransactionCount(account, 'latest')
-  const data = await web3.eth.accounts.signTransaction(
-    {
-      to: contract.options.address,
-      nonce: txNonce,
-      gas,
-      maxFeePerGas,
-      maxPriorityFeePerGas,
-      data: method.encodeABI()
-    },
-    process.env.RELAYER_ACCOUNT as string
-  )
-  return {
-    transactionHash: data.transactionHash as string,
-    send: () => web3.eth.sendSignedTransaction(data.rawTransaction as string)
-  }
+  return await method.send({
+    from: account,
+    gas,
+    maxFeePerGas,
+    maxPriorityFeePerGas
+  })
 }

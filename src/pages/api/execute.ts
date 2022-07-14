@@ -3,9 +3,9 @@ import { definitions } from 'types/supabase'
 import { v4 as uuidv4 } from 'uuid'
 import { method } from 'api/middleware/method'
 import { RelayTransactionParameters } from 'types/common'
-import { getProfileAddress } from 'contracts/keyManager'
+import { executeRelayCall, getProfileAddress } from 'contracts/keyManager'
 import { supabase } from 'api/utils/supabase'
-import { executeRelayCall, quota } from 'contracts/relayContractor'
+import { execute as executeTransactionSpending, quota } from 'contracts/relayContractor'
 import { web3 } from 'api/utils/web3'
 
 type RelayExecuteParameters = {
@@ -30,6 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       keyManager: parameters.keyManagerAddress,
       ...parameters.transaction
     })
+    console.log(`processing relay: ${transactionHash}`)
     const { error } = await supabase
       .from<definitions['tasks']>('tasks')
       .insert({
@@ -47,7 +48,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Internal'
       })
     } else {
-      sendRelayCallTx()
+      const execute = async () => {
+        try {
+          try {
+            console.log(`sending relay: ${transactionHash}`)
+            await sendRelayCallTx()
+          } finally {
+            console.log(`sending spend: ${transactionHash}`)
+            await executeTransactionSpending(web3, profile, transactionHash)
+          }
+        } catch (e) {
+          console.error(e)
+          // mark tx failed
+          await supabase
+            .from<definitions['tasks']>('tasks')
+            .update({ status: 'failed' })
+            .eq('transaction_hash', transactionHash.toLowerCase())
+        }
+      }
+      execute()
       return res.status(200).json({
         success: true,
         taskId,
