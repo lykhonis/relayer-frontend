@@ -8,8 +8,10 @@ export function Web3Provider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const getWeb3 = async () => {
-      const web3 = new Web3((window as any).ethereum)
-      return web3
+      const provider = (window as any).ethereum
+      if (provider) {
+        return new Web3(provider)
+      }
     }
 
     getWeb3().then((web3) => setWeb3(web3))

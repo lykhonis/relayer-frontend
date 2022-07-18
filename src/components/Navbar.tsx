@@ -56,6 +56,15 @@ export const Navbar = () => {
                       Deposit
                     </a>
                   </Link>
+                  <Link href={`/service`}>
+                    <a
+                      className={`px-3 py-2 mr-4 text-sm font-semibold text-gray-900 rounded-md hover:text-primary-700 hover:bg-gray-100 focus:outline-none focus:text-primary-700 focus:bg-gray-100 ${
+                        router.pathname.includes('/service') && 'text-primary-700 bg-gray-100'
+                      }`}
+                    >
+                      Service
+                    </a>
+                  </Link>
                   <Link href={`/transactions`}>
                     <a
                       className={`px-3 py-2 mr-4 text-sm font-semibold text-gray-900 rounded-md hover:text-primary-700 hover:bg-gray-100 focus:outline-none focus:text-primary-700 focus:bg-gray-100 ${
@@ -82,13 +91,17 @@ export const Navbar = () => {
             )}
             <div className="hidden sm:block">
               <div className="flex items-center ml-4 md:ml-6">
-                <Chip
-                  size="small"
-                  label={networkName ?? ''}
-                  className="whitespace-nowrap bg-gray-100 text-gray-600"
-                  colorClassName="gray"
-                />
-                {!profile ? (
+                {networkName && (
+                  <Chip
+                    size="small"
+                    label={networkName ?? ''}
+                    className="whitespace-nowrap bg-gray-100 text-gray-600"
+                    colorClassName="gray"
+                  />
+                )}
+                {!networkName ? (
+                  <></>
+                ) : !profile ? (
                   <Button
                     onClick={requestProfile}
                     isLoading={isLoading}
@@ -237,6 +250,15 @@ export const Navbar = () => {
                 }`}
               >
                 Deposit
+              </a>
+            </Link>
+            <Link href={`/service`}>
+              <a
+                className={`block px-3 py-2 mt-1 text-base font-semibold text-gray-900 rounded-md hover:text-primary-700 hover:bg-gray-100 focus:outline-none focus:text-primary-700 focus:bg-gray-100 ${
+                  router.pathname.includes('/service') && 'text-primary-700 bg-gray-100'
+                }`}
+              >
+                Service
               </a>
             </Link>
             <Link href={`/transactions`}>

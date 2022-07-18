@@ -164,7 +164,12 @@ const Transactions = () => {
                           Value: {transaction.value ? formatLyx(transaction.value) : <>&#8230;</>}
                         </p>
                         <p className="flex items-center text-xs text-gray-500">
-                          Fee: {transaction.fee ? formatLyx(transaction.fee) : <>&#8230;</>}
+                          Fee:{' '}
+                          {transaction.fee ? (
+                            formatLyx(transaction.fee, { decimals: 10 })
+                          ) : (
+                            <>&#8230;</>
+                          )}
                         </p>
                       </div>
                       <div className="mt-2 flex items-start text-sm text-gray-500 sm:mt-0">

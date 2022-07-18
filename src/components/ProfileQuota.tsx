@@ -96,7 +96,7 @@ const ProfileQuota = () => {
           )}
         </div>
         <div className="h-4 flex flex-row rounded-full overflow-hidden">
-          {quota?.remaining && quota?.used ? (
+          {quota?.remaining || quota?.used ? (
             <>
               <span
                 className="bg-primary-400 rounded-l-full"

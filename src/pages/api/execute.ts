@@ -5,12 +5,33 @@ import { method } from 'api/middleware/method'
 import { RelayTransactionParameters } from 'types/common'
 import { executeRelayCall, getProfileAddress } from 'contracts/keyManager'
 import { supabase } from 'api/utils/supabase'
-import { execute as executeTransactionSpending, quota } from 'contracts/relayContractor'
+import { quota } from 'contracts/relayContractor'
 import { web3 } from 'api/utils/web3'
+import Web3 from 'web3'
 
 type RelayExecuteParameters = {
   keyManagerAddress: string
   transaction: RelayTransactionParameters
+}
+
+const submitTransaction = async (profile: string, transactionHash: string) => {
+  const data = { profile, transactionHash }
+  const hash = Web3.utils.soliditySha3(JSON.stringify(data)) as string
+  const signature = await web3.eth.sign(hash, web3.eth.defaultAccount as string)
+  const url = `${process.env.ORACLES_URL}/transaction`
+  console.log(`Submitting to ${url}`)
+  const response = await fetch(url, {
+    method: 'put',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept-Type': 'application/json'
+    },
+    body: JSON.stringify({ data, signature })
+  })
+  if (!response.ok) {
+    const data = await response.json()
+    console.error(`Failed to submit transaction: ${data?.error}`)
+  }
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -25,10 +46,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Insufficient funds'
       })
     }
-    const nonce = await web3.eth.getTransactionCount(web3.eth.defaultAccount as string, 'latest')
     const { transactionHash, send: sendRelayCallTx } = await executeRelayCall({
       web3,
-      accountNonce: nonce,
       keyManager: parameters.keyManagerAddress,
       ...parameters.transaction
     })
@@ -50,23 +69,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Internal'
       })
     } else {
-      const execute = async () => {
+      const markTransactionFailed = async () => {
+        // mark tx failed
+        await supabase
+          .from<definitions['tasks']>('tasks')
+          .update({ status: 'failed' })
+          .eq('transaction_hash', transactionHash.toLowerCase())
+      }
+
+      const executeRelay = async () => {
         try {
           console.log(`sending relay: ${transactionHash}`)
-          await Promise.all([
-            sendRelayCallTx(),
-            executeTransactionSpending(web3, profile, transactionHash, nonce + 1)
-          ])
+          await sendRelayCallTx()
         } catch (e) {
           console.error(e)
-          // mark tx failed
-          await supabase
-            .from<definitions['tasks']>('tasks')
-            .update({ status: 'failed' })
-            .eq('transaction_hash', transactionHash.toLowerCase())
+          await markTransactionFailed()
         }
       }
-      execute()
+
+      console.log(`submitting transaction: ${transactionHash}`)
+      await submitTransaction(profile, transactionHash)
+
+      executeRelay()
+
       return res.status(200).json({
         success: true,
         taskId,
