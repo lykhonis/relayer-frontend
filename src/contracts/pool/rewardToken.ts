@@ -6,8 +6,8 @@ import { adjustGasEstimate, getFeeData } from 'api/utils/web3'
 const getContract = (web3: Web3) =>
   new web3.eth.Contract(RewardToken.abi as any, process.env.NEXT_PUBLIC_CONTRACT_REWARD_TOKEN)
 
-export const balanceOf = async (web3: Web3, profile: string) => {
-  const balanace = await getContract(web3).methods.balanceOf(profile).call()
+export const balanceOf = async (web3: Web3, account: string) => {
+  const balanace = await getContract(web3).methods.balanceOf(account).call()
   return Web3.utils.toBN(balanace)
 }
 

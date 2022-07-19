@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const profile = req.query.profile as string
     const needCount = req.query.count === 'true'
     const page = Number(req.query.page ?? 0)
-    const pageCount = 10
+    const pageCount = 5
     const query = supabase
       .from<definitions['tasks']>('tasks')
       .select('created_at,updated_at,status,transaction_hash,key_manager,profile', {

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import Web3 from 'web3'
 import classNames from 'classnames'
@@ -15,7 +15,7 @@ type Transaction = {
   value?: string
   fee?: string
   status: 'unknown' | 'pending' | 'completed' | 'failed'
-  createdAt: string
+  createdAt: string | number
 }
 
 type TransactionPage = {
@@ -23,14 +23,31 @@ type TransactionPage = {
   transactions: Transaction[]
 }
 
+const generateEmptySet = (count: number) => {
+  const result = []
+  const timestamp = new Date().getTime()
+  for (let i = 0; i < count; i++) {
+    result.push({
+      hash: '0x…',
+      to: '0x…',
+      value: '0',
+      fee: '0',
+      status: 'unknown',
+      createdAt: timestamp
+    } as Transaction)
+  }
+  return result
+}
+
 const Transactions = () => {
   const { profile } = useProfile()
   const web3 = useWeb3()
   const [page, setPage] = useState(0)
+  const [loadingSet, setLoadingSet] = useState<Transaction[]>([])
   const { addToast } = useToast()
   const clipboard = useClipboard()
 
-  const { data } = useSWR<TransactionPage | undefined>(
+  const { data, error } = useSWR<TransactionPage | undefined>(
     web3 && profile?.address ? `/api/transactions?profile=${profile.address}&page=${page}` : null,
     async (url) => {
       const response = await fetch(url, {
@@ -72,123 +89,116 @@ const Transactions = () => {
   )
 
   const pageCount = Math.max(1, data?.pageCount ?? 1)
-  const pageTotal = Math.ceil((data?.transactions?.length ?? 0) / pageCount)
+  const morePages = (data?.transactions?.length ?? 0) >= pageCount
+  const loading = !data && !error
 
-  const handlePrevious = useCallback(async () => setPage(page - 1), [page])
-  const handleNext = useCallback(async () => setPage(page + 1), [page])
-  const handleForward = useCallback(
-    async () => setPage(Math.min(Math.max(0, pageTotal - 1), page + pageCount)),
-    [page, pageTotal, pageCount]
-  )
-  const handleBackward = useCallback(
-    async () => setPage(Math.max(0, page - pageCount)),
-    [page, pageCount]
-  )
+  useEffect(() => {
+    if (pageCount > loadingSet.length) {
+      setLoadingSet(generateEmptySet(pageCount))
+    }
+  }, [pageCount, loadingSet])
 
   return (
     <div className="max-w-3xl mx-auto px-4 my-8 sm:px-6 lg:max-w-7xl lg:px-8">
       <div className="rounded-lg overflow-hidden shadow px-4 py-5 h-full">
         <ul role="list" className="divide-y divide-gray-200 overflow-hidden">
-          {data?.transactions?.length === 0 && (
+          {!data?.transactions?.length && !loading && (
             <p className="text-sm text-gray-500">No transactions</p>
           )}
-          {data?.transactions &&
-            data.transactions
-              .slice(page * pageCount, Math.max(0, (page + 1) * pageCount))
-              .map((transaction) => (
-                <li key={transaction.hash}>
-                  <div className="px-4 py-4 sm:px-6">
-                    <div className="flex items-center justify-between">
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cursor-pointer text-sm font-medium text-primary-600 truncate hover:text-primary-900"
-                        href={`https://explorer.execution.l16.lukso.network/tx/${transaction.hash}`}
-                      >
-                        {transaction.hash}
-                      </a>
-                      <div className="ml-2 flex-shrink-0 flex">
-                        <p
-                          className={classNames(
-                            'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                            transaction.status === 'pending'
-                              ? 'bg-gray-100 text-gray-800'
-                              : transaction.status === 'completed'
-                              ? 'bg-green-100 text-green-800'
-                              : transaction.status === 'failed'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-gray-100 text-gray-800'
-                          )}
-                        >
-                          {transaction.status}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-1 sm:flex sm:justify-between">
-                      <div className="flex flex-col">
-                        <p className="flex items-center text-sm text-gray-500">
-                          {transaction.to ? (
-                            <>
-                              &#8594; {shortenHex(transaction.to, 6)}
-                              <a
-                                className="ml-1 cursor-pointer"
-                                onClick={() => {
-                                  if (clipboard) {
-                                    clipboard.copy(transaction.to)
-                                    addToast({ title: 'Copied', type: 'success' })
-                                  }
-                                }}
-                              >
-                                <svg
-                                  className="h-4 w-4 text-gray-500 hover:text-gray-900"
-                                  width="24"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth="2"
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path stroke="none" d="M0 0h24v24H0z" />
-                                  <rect x="8" y="8" width="12" height="12" rx="2" />
-                                  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
-                                </svg>
-                              </a>
-                            </>
-                          ) : (
-                            <>&#8230;</>
-                          )}
-                        </p>
-                        <p className="mt-2 flex items-center text-xs text-gray-500">
-                          Value: {transaction.value ? formatLyx(transaction.value) : <>&#8230;</>}
-                        </p>
-                        <p className="flex items-center text-xs text-gray-500">
-                          Fee:{' '}
-                          {transaction.fee ? (
-                            formatLyx(transaction.fee, { decimals: 10 })
-                          ) : (
-                            <>&#8230;</>
-                          )}
-                        </p>
-                      </div>
-                      <div className="mt-2 flex items-start text-sm text-gray-500 sm:mt-0">
-                        <p>
-                          {new Date(transaction.createdAt).toLocaleString(undefined, {
-                            year: '2-digit',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            weekday: 'short'
-                          })}
-                        </p>
-                      </div>
-                    </div>
+          {(data?.transactions ?? (loading ? loadingSet : [])).map((transaction, index) => (
+            <li key={index}>
+              <div className="px-4 py-4 sm:px-6">
+                <div className="flex items-center justify-between">
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer text-sm font-medium text-primary-600 truncate hover:text-primary-900"
+                    href={`https://explorer.execution.l16.lukso.network/tx/${transaction.hash}`}
+                  >
+                    {transaction.hash}
+                  </a>
+                  <div className="ml-2 flex-shrink-0 flex">
+                    <p
+                      className={classNames(
+                        'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                        transaction.status === 'pending'
+                          ? 'bg-gray-100 text-gray-800'
+                          : transaction.status === 'completed'
+                          ? 'bg-green-100 text-green-800'
+                          : transaction.status === 'failed'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'
+                      )}
+                    >
+                      {transaction.status}
+                    </p>
                   </div>
-                </li>
-              ))}
+                </div>
+                <div className="mt-1 sm:flex sm:justify-between">
+                  <div className="flex flex-col">
+                    <p className="flex items-center text-sm text-gray-500">
+                      {transaction.to ? (
+                        <>
+                          &#8594; {shortenHex(transaction.to, 6)}
+                          <a
+                            className="ml-1 cursor-pointer"
+                            onClick={() => {
+                              if (clipboard) {
+                                clipboard.copy(transaction.to)
+                                addToast({ title: 'Copied', type: 'success' })
+                              }
+                            }}
+                          >
+                            <svg
+                              className="h-4 w-4 text-gray-500 hover:text-gray-900"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path stroke="none" d="M0 0h24v24H0z" />
+                              <rect x="8" y="8" width="12" height="12" rx="2" />
+                              <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+                            </svg>
+                          </a>
+                        </>
+                      ) : (
+                        <>&#8230;</>
+                      )}
+                    </p>
+                    <p className="mt-2 flex items-center text-xs text-gray-500">
+                      Value: {transaction.value ? formatLyx(transaction.value) : <>&#8230;</>}
+                    </p>
+                    <p className="flex items-center text-xs text-gray-500">
+                      Fee:{' '}
+                      {transaction.fee ? (
+                        formatLyx(transaction.fee, { decimals: 10 })
+                      ) : (
+                        <>&#8230;</>
+                      )}
+                    </p>
+                  </div>
+                  <div className="mt-2 flex items-start text-sm text-gray-500 sm:mt-0">
+                    <p>
+                      {new Date(transaction.createdAt).toLocaleString(undefined, {
+                        year: '2-digit',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        weekday: 'short'
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
       <nav className="mt-10">
@@ -197,36 +207,41 @@ const Transactions = () => {
             {page > 0 && (
               <a
                 className="cursor-pointer border-transparent border-b-2 pb-2 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                onClick={handlePrevious}
+                onClick={() => setPage(page - 1)}
               >
-                Previous
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </a>
             )}
           </div>
-          <div className="hidden md:-mt-px md:flex">
-            <a
-              className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
-              onClick={handleBackward}
-            >
-              {page + 1}
-            </a>
-            <span className="border-transparent text-gray-500 px-4 inline-flex items-center text-sm font-medium">
-              &#8230;
-            </span>
-            <a
-              className="cursor-pointer border-transparent border-b-2 pb-2 text-gray-500 hover:text-gray-700 hover:border-gray-300 px-4 inline-flex items-center text-sm font-medium"
-              onClick={handleForward}
-            >
-              {Math.min(Math.max(1, pageTotal), page + pageCount - 1)}
-            </a>
-          </div>
           <div className="-mt-px w-0 flex-1 flex justify-end">
-            {page < pageTotal - 1 && (
+            {morePages && (
               <a
                 className="cursor-pointer border-transparent border-b-2 pb-2 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                onClick={handleNext}
+                onClick={() => setPage(page + 1)}
               >
-                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </a>
             )}
           </div>
