@@ -12,15 +12,15 @@ export interface paths {
       }
     }
   }
-  '/staked_token': {
+  '/index_checkpoint': {
     get: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.staked_token.id']
-          created_at?: parameters['rowFilter.staked_token.created_at']
-          updated_at?: parameters['rowFilter.staked_token.updated_at']
-          account?: parameters['rowFilter.staked_token.account']
-          rewards?: parameters['rowFilter.staked_token.rewards']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
           /** Filtering Columns */
           select?: parameters['select']
           /** Ordering */
@@ -42,7 +42,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions['staked_token'][]
+          schema: definitions['index_checkpoint'][]
         }
         /** Partial Content */
         206: unknown
@@ -51,8 +51,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** staked_token */
-          staked_token?: definitions['staked_token']
+          /** index_checkpoint */
+          index_checkpoint?: definitions['index_checkpoint']
         }
         query: {
           /** Filtering Columns */
@@ -71,11 +71,11 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.staked_token.id']
-          created_at?: parameters['rowFilter.staked_token.created_at']
-          updated_at?: parameters['rowFilter.staked_token.updated_at']
-          account?: parameters['rowFilter.staked_token.account']
-          rewards?: parameters['rowFilter.staked_token.rewards']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
         }
         header: {
           /** Preference */
@@ -90,15 +90,117 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.staked_token.id']
-          created_at?: parameters['rowFilter.staked_token.created_at']
-          updated_at?: parameters['rowFilter.staked_token.updated_at']
-          account?: parameters['rowFilter.staked_token.account']
-          rewards?: parameters['rowFilter.staked_token.rewards']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
         }
         body: {
-          /** staked_token */
-          staked_token?: definitions['staked_token']
+          /** index_checkpoint */
+          index_checkpoint?: definitions['index_checkpoint']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** No Content */
+        204: never
+      }
+    }
+  }
+  '/services': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.services.id']
+          key_manager?: parameters['rowFilter.services.key_manager']
+          created_at?: parameters['rowFilter.services.created_at']
+          updated_at?: parameters['rowFilter.services.updated_at']
+          api_key?: parameters['rowFilter.services.api_key']
+          contracts?: parameters['rowFilter.services.contracts']
+          /** Filtering Columns */
+          select?: parameters['select']
+          /** Ordering */
+          order?: parameters['order']
+          /** Limiting and Pagination */
+          offset?: parameters['offset']
+          /** Limiting and Pagination */
+          limit?: parameters['limit']
+        }
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range']
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit']
+          /** Preference */
+          Prefer?: parameters['preferCount']
+        }
+      }
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['services'][]
+        }
+        /** Partial Content */
+        206: unknown
+      }
+    }
+    post: {
+      parameters: {
+        body: {
+          /** services */
+          services?: definitions['services']
+        }
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** Created */
+        201: unknown
+      }
+    }
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.services.id']
+          key_manager?: parameters['rowFilter.services.key_manager']
+          created_at?: parameters['rowFilter.services.created_at']
+          updated_at?: parameters['rowFilter.services.updated_at']
+          api_key?: parameters['rowFilter.services.api_key']
+          contracts?: parameters['rowFilter.services.contracts']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** No Content */
+        204: never
+      }
+    }
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.services.id']
+          key_manager?: parameters['rowFilter.services.key_manager']
+          created_at?: parameters['rowFilter.services.created_at']
+          updated_at?: parameters['rowFilter.services.updated_at']
+          api_key?: parameters['rowFilter.services.api_key']
+          contracts?: parameters['rowFilter.services.contracts']
+        }
+        body: {
+          /** services */
+          services?: definitions['services']
         }
         header: {
           /** Preference */
@@ -222,9 +324,15 @@ export interface paths {
 }
 
 export interface definitions {
-  staked_token: {
-    /** Format: bigint */
+  index_checkpoint: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
     id: number
+    /** Format: text */
+    contract: string
     /**
      * Format: timestamp with time zone
      * @default now()
@@ -234,11 +342,33 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    updated_at?: string
+    updated_at: string
+    /** Format: bigint */
+    block: number
+  }
+  services: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number
     /** Format: text */
-    account: string
+    key_manager: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    updated_at: string
     /** Format: text */
-    rewards: string
+    api_key?: string
+    /** Format: jsonb */
+    contracts?: string
   }
   tasks: {
     /** Format: bigint */
@@ -303,18 +433,32 @@ export interface parameters {
   offset: string
   /** @description Limiting and Pagination */
   limit: string
-  /** @description staked_token */
-  'body.staked_token': definitions['staked_token']
+  /** @description index_checkpoint */
+  'body.index_checkpoint': definitions['index_checkpoint']
   /** Format: bigint */
-  'rowFilter.staked_token.id': string
-  /** Format: timestamp with time zone */
-  'rowFilter.staked_token.created_at': string
-  /** Format: timestamp with time zone */
-  'rowFilter.staked_token.updated_at': string
+  'rowFilter.index_checkpoint.id': string
   /** Format: text */
-  'rowFilter.staked_token.account': string
+  'rowFilter.index_checkpoint.contract': string
+  /** Format: timestamp with time zone */
+  'rowFilter.index_checkpoint.created_at': string
+  /** Format: timestamp with time zone */
+  'rowFilter.index_checkpoint.updated_at': string
+  /** Format: bigint */
+  'rowFilter.index_checkpoint.block': string
+  /** @description services */
+  'body.services': definitions['services']
+  /** Format: bigint */
+  'rowFilter.services.id': string
   /** Format: text */
-  'rowFilter.staked_token.rewards': string
+  'rowFilter.services.key_manager': string
+  /** Format: timestamp with time zone */
+  'rowFilter.services.created_at': string
+  /** Format: timestamp with time zone */
+  'rowFilter.services.updated_at': string
+  /** Format: text */
+  'rowFilter.services.api_key': string
+  /** Format: jsonb */
+  'rowFilter.services.contracts': string
   /** @description tasks */
   'body.tasks': definitions['tasks']
   /** Format: bigint */

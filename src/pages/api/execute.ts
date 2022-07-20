@@ -16,7 +16,7 @@ type RelayExecuteParameters = {
 
 const submitTransaction = async (profile: string, transactionHash: string) => {
   const data = { profile, transactionHash }
-  const hash = Web3.utils.soliditySha3(JSON.stringify(data)) as string
+  const hash = Web3.utils.sha3(JSON.stringify(data)) as string
   const signature = await web3.eth.sign(hash, web3.eth.defaultAccount as string)
   const url = `${process.env.ORACLES_URL}/transaction`
   console.log(`Submitting to ${url}`)

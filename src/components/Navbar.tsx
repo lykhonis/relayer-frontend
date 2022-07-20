@@ -167,7 +167,7 @@ export const Navbar = () => {
                               <p className="text-sm text-gray-500 truncate">
                                 {shortenHex(profile?.address ?? '')}
                               </p>
-                              <a className="ml-1 cursor-pointer" onClick={handleCopyAddress}>
+                              <i className="ml-1 cursor-pointer" onClick={handleCopyAddress}>
                                 <svg
                                   className="h-5 w-5 text-gray-500 hover:text-gray-900"
                                   width="24"
@@ -183,7 +183,7 @@ export const Navbar = () => {
                                   <rect x="8" y="8" width="12" height="12" rx="2" />
                                   <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
                                 </svg>
-                              </a>
+                              </i>
                             </div>
                           </div>
                         </div>
