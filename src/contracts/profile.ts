@@ -3,7 +3,7 @@ import { Contract } from 'web3-eth-contract'
 import Web3 from 'web3'
 import { ERC725 } from '@erc725/erc725.js'
 
-const getContract = (web3: Web3, profile: string | Contract) => {
+export const getContract = (web3: Web3, profile: string | Contract) => {
   if (typeof profile === 'string') {
     return new web3.eth.Contract(UniversalProfile.abi as any, profile)
   }

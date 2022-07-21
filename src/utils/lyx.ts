@@ -3,9 +3,9 @@ import Web3 from 'web3'
 
 export const formatLyx = (
   value: string | BN,
-  { suffix = 'LYX', decimals = 4 }: { suffix?: string; decimals?: number } = {}
+  { suffix = 'LYX', decimals }: { suffix?: string | null; decimals?: number | null } = {}
 ) => {
-  const lyxValue = Number(Web3.utils.fromWei(value, 'ether')).toFixed(decimals)
+  const lyxValue = Number(Web3.utils.fromWei(value, 'ether')).toFixed(decimals ?? 4)
   if (suffix) {
     return `${lyxValue} ${suffix}`
   } else {

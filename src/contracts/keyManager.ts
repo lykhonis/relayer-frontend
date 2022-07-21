@@ -4,7 +4,7 @@ import { adjustGasEstimate, getFeeData } from 'api/utils/web3'
 import { RelayTransactionParameters } from 'types/common'
 import Web3 from 'web3'
 
-const getContract = (web3: Web3, keyManager: string | Contract) => {
+export const getContract = (web3: Web3, keyManager: string | Contract) => {
   if (typeof keyManager === 'string') {
     return new web3.eth.Contract(LSP6KeyManager.abi as any, keyManager)
   }

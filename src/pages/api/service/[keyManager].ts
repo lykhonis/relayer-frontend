@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!permissions.SIGN) {
       return res.status(401).json({ error: 'Invalid signature' })
     }
-    const apiKey = Web3.utils.stripHexPrefix(Web3.utils.randomHex(10))
+    const apiKey = Web3.utils.stripHexPrefix(Web3.utils.randomHex(20))
     const { data, error } = await supabase
       .from<definitions['services']>('services')
       .upsert(
