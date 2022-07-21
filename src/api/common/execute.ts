@@ -25,7 +25,6 @@ export const submitTransaction = async (profile: string, transactionHash: string
 }
 
 export const executeTransaction = async ({
-  taskId,
   keyManager,
   profile,
   abi,
@@ -33,7 +32,6 @@ export const executeTransaction = async ({
   nonce,
   payeeProfile
 }: {
-  taskId: string
   keyManager: string
   profile: string
   abi: string
@@ -52,7 +50,6 @@ export const executeTransaction = async ({
   const { error } = await supabase
     .from<definitions['tasks']>('tasks')
     .insert({
-      uuid: taskId,
       status: 'pending',
       transaction_hash: transactionHash.toLowerCase(),
       key_manager: keyManager.toLowerCase(),
@@ -84,4 +81,5 @@ export const executeTransaction = async ({
   await submitTransaction(payeeProfile, transactionHash)
 
   executeRelay()
+  return { transactionHash }
 }

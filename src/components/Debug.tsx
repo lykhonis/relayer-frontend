@@ -109,7 +109,7 @@ const Debug = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            keyManagerAddress: keyManager,
+            address: profile.address,
             transaction: {
               abi,
               nonce,
@@ -119,6 +119,9 @@ const Debug = () => {
         })
 
         const data = await response.json()
+        console.log(`${response.status}: ${response.statusText}`)
+        console.log(data)
+
         if (!response.ok) {
           throw new Error(data?.error)
         }
@@ -140,6 +143,43 @@ const Debug = () => {
       }
     }
   }, [web3, profile?.address, profileData, serviceKey, addToast])
+
+  const handleQuotaDirect = useCallback(async () => {
+    if (web3 && profile?.address) {
+      try {
+        setLoading(true)
+        const timestamp = new Date().getTime()
+        const message = Web3.utils.sha3(profile.address + timestamp) as string
+        const { signature } = (await web3.eth.sign(message, profile.address)) as any
+        const response = await fetch(`/api/quota`, {
+          method: 'get',
+          headers: {
+            'Accept-Type': 'application/json',
+            Authorization: `address=${profile.address},timestamp=${timestamp},signature=${signature}`
+          }
+        })
+        const data = await response.json()
+        if (!response.ok) {
+          throw new Error(data.error)
+        }
+        console.log(data)
+        addToast({
+          title: 'Profile Quota',
+          description: JSON.stringify(data, null, 2),
+          type: 'success'
+        })
+      } catch (e: any) {
+        console.error(e)
+        addToast({
+          title: 'Profile Quota',
+          description: e.message ?? 'Failed to retrieve quota',
+          type: 'error'
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [web3, profile?.address, addToast])
 
   return (
     <>
@@ -208,6 +248,19 @@ const Debug = () => {
               />
             </dd>
           </div>
+
+          <div>
+            <dt className="text-sm text-gray-500">Profile Quota</dt>
+            <dd className="mt-2">
+              <Button
+                variant="outline"
+                text="Request"
+                onClick={handleQuotaDirect}
+                disabled={loading}
+              />
+            </dd>
+          </div>
+
           <div>
             <dt className="text-sm text-gray-500">
               Profile Data (Internal Call):{' '}

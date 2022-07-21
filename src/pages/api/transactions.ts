@@ -37,10 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { data: transactions, error, count } = await query
     if (!transactions || error) {
       console.error(error?.message)
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid task'
-      })
+      return res.status(400).json({ error: 'Invalid request' })
     }
     if (needCount) {
       return res.status(200).json({ count })
