@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const payeeKeyManager = payee.key_manager
     const payeeProfile = await getProfileAddress(web3, payeeKeyManager)
 
-    const hash = Web3.utils.sha3(profile + timestamp) as string
+    const hash = Web3.utils.soliditySha3(profile, timestamp) as string
     const controller = web3.eth.accounts.recover(hash, signature)
 
     const permissions = await getControllerPermissions(web3, profile, controller)

@@ -152,7 +152,7 @@ const Debug = () => {
       try {
         setLoading(true)
         const timestamp = new Date().getTime()
-        const hash = Web3.utils.keccak256(profile.address + timestamp) as string
+        const hash = Web3.utils.soliditySha3(profile.address, timestamp) as string
         const { signature } = (await web3.eth.sign(hash, profile.address)) as any
         const response = await fetch(
           serviceKey ? `api/delegate/${serviceKey}/quota` : 'api/quota',

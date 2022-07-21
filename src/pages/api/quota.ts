@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ error: 'Invalid request' })
     }
 
-    const hash = Web3.utils.sha3(profile + timestamp) as string
+    const hash = Web3.utils.soliditySha3(profile, timestamp) as string
     const controller = web3.eth.accounts.recover(hash, signature)
 
     const permissions = await getControllerPermissions(web3, profile, controller)
