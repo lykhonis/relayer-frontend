@@ -22,7 +22,7 @@ export const approve = async (
   spender: string,
   amount: string | BN
 ) => {
-  const method = await getContract(web3).methods.approve(spender, amount)
+  const method = getContract(web3).methods.approve(spender, amount)
   const gas = adjustGasEstimate(await method.estimateGas({ from: profile }))
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeData(web3)
   return await method.send({

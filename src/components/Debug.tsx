@@ -152,16 +152,21 @@ const Debug = () => {
       try {
         setLoading(true)
         const timestamp = new Date().getTime()
-        const message = Web3.utils.sha3(profile.address + timestamp) as string
-        const { signature } = (await web3.eth.sign(message, profile.address)) as any
+        const hash = Web3.utils.keccak256(profile.address + timestamp) as string
+        const { signature } = (await web3.eth.sign(hash, profile.address)) as any
         const response = await fetch(
           serviceKey ? `api/delegate/${serviceKey}/quota` : 'api/quota',
           {
-            method: 'get',
+            method: 'post',
             headers: {
               'Accept-Type': 'application/json',
-              Authorization: `address=${profile.address},timestamp=${timestamp},signature=${signature}`
-            }
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              address: profile.address,
+              timestamp,
+              signature
+            })
           }
         )
         const data = await response.json()

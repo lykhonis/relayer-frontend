@@ -50,9 +50,9 @@ const ProfileQuota = () => {
     try {
       if (web3 && profile?.address) {
         setLoading(true)
-        const { remaining } = await relayQuota(web3, profile?.address)
-        const balance = await rewardBalanceOf(web3, profile?.address)
-        await approveRewardSpending(web3, profile?.address, relayAddress, balance)
+        const { remaining } = await relayQuota(web3, profile.address)
+        const balance = await rewardBalanceOf(web3, profile.address)
+        await approveRewardSpending(web3, profile.address, relayAddress, balance)
         addToast({
           type: 'success',
           title: 'Increase Quota',

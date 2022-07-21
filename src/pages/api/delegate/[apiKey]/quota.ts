@@ -11,18 +11,9 @@ import { getProfileAddress } from 'contracts/keyManager'
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const apiKey = req.query.apiKey as string
-    const authorization = new Map(
-      (req.headers.authorization?.split(',')?.map((value) =>
-        value
-          .trim()
-          .split('=')
-          .map((value) => value.trim())
-      ) ?? []) as Array<[string, string]>
-    )
-
-    const profile = authorization.get('address')
-    const timestamp = Number(authorization.get('timestamp'))
-    const signature = authorization.get('signature')
+    const profile = req.body.address
+    const timestamp = Number(req.body.timestamp)
+    const signature = req.body.signature
 
     if (!profile || !signature || Number.isNaN(timestamp)) {
       return res.status(400).json({ error: 'Invalid request' })
@@ -67,4 +58,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-export default method('GET', handler)
+export default method('POST', handler)
