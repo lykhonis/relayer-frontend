@@ -12,17 +12,15 @@ export interface paths {
       }
     }
   }
-  '/tasks': {
+  '/index_checkpoint': {
     get: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          profile?: parameters['rowFilter.tasks.profile']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
           /** Filtering Columns */
           select?: parameters['select']
           /** Ordering */
@@ -44,7 +42,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions['tasks'][]
+          schema: definitions['index_checkpoint'][]
         }
         /** Partial Content */
         206: unknown
@@ -53,8 +51,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** tasks */
-          tasks?: definitions['tasks']
+          /** index_checkpoint */
+          index_checkpoint?: definitions['index_checkpoint']
         }
         query: {
           /** Filtering Columns */
@@ -73,13 +71,11 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          profile?: parameters['rowFilter.tasks.profile']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
         }
         header: {
           /** Preference */
@@ -94,17 +90,15 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          profile?: parameters['rowFilter.tasks.profile']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
         }
         body: {
-          /** tasks */
-          tasks?: definitions['tasks']
+          /** index_checkpoint */
+          index_checkpoint?: definitions['index_checkpoint']
         }
         header: {
           /** Preference */
@@ -219,15 +213,17 @@ export interface paths {
       }
     }
   }
-  '/index_checkpoint': {
+  '/tasks': {
     get: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.index_checkpoint.id']
-          contract?: parameters['rowFilter.index_checkpoint.contract']
-          created_at?: parameters['rowFilter.index_checkpoint.created_at']
-          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
-          block?: parameters['rowFilter.index_checkpoint.block']
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
           /** Filtering Columns */
           select?: parameters['select']
           /** Ordering */
@@ -249,7 +245,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions['index_checkpoint'][]
+          schema: definitions['tasks'][]
         }
         /** Partial Content */
         206: unknown
@@ -258,8 +254,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** index_checkpoint */
-          index_checkpoint?: definitions['index_checkpoint']
+          /** tasks */
+          tasks?: definitions['tasks']
         }
         query: {
           /** Filtering Columns */
@@ -278,11 +274,13 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.index_checkpoint.id']
-          contract?: parameters['rowFilter.index_checkpoint.contract']
-          created_at?: parameters['rowFilter.index_checkpoint.created_at']
-          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
-          block?: parameters['rowFilter.index_checkpoint.block']
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
         }
         header: {
           /** Preference */
@@ -297,15 +295,119 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.index_checkpoint.id']
-          contract?: parameters['rowFilter.index_checkpoint.contract']
-          created_at?: parameters['rowFilter.index_checkpoint.created_at']
-          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
-          block?: parameters['rowFilter.index_checkpoint.block']
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
         }
         body: {
-          /** index_checkpoint */
-          index_checkpoint?: definitions['index_checkpoint']
+          /** tasks */
+          tasks?: definitions['tasks']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** No Content */
+        204: never
+      }
+    }
+  }
+  '/users': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.users.id']
+          profile?: parameters['rowFilter.users.profile']
+          created_at?: parameters['rowFilter.users.created_at']
+          updated_at?: parameters['rowFilter.users.updated_at']
+          quota_used?: parameters['rowFilter.users.quota_used']
+          quota_start_date?: parameters['rowFilter.users.quota_start_date']
+          /** Filtering Columns */
+          select?: parameters['select']
+          /** Ordering */
+          order?: parameters['order']
+          /** Limiting and Pagination */
+          offset?: parameters['offset']
+          /** Limiting and Pagination */
+          limit?: parameters['limit']
+        }
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range']
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit']
+          /** Preference */
+          Prefer?: parameters['preferCount']
+        }
+      }
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['users'][]
+        }
+        /** Partial Content */
+        206: unknown
+      }
+    }
+    post: {
+      parameters: {
+        body: {
+          /** users */
+          users?: definitions['users']
+        }
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** Created */
+        201: unknown
+      }
+    }
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.users.id']
+          profile?: parameters['rowFilter.users.profile']
+          created_at?: parameters['rowFilter.users.created_at']
+          updated_at?: parameters['rowFilter.users.updated_at']
+          quota_used?: parameters['rowFilter.users.quota_used']
+          quota_start_date?: parameters['rowFilter.users.quota_start_date']
+        }
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn']
+        }
+      }
+      responses: {
+        /** No Content */
+        204: never
+      }
+    }
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.users.id']
+          profile?: parameters['rowFilter.users.profile']
+          created_at?: parameters['rowFilter.users.created_at']
+          updated_at?: parameters['rowFilter.users.updated_at']
+          quota_used?: parameters['rowFilter.users.quota_used']
+          quota_start_date?: parameters['rowFilter.users.quota_start_date']
+        }
+        body: {
+          /** users */
+          users?: definitions['users']
         }
         header: {
           /** Preference */
@@ -321,6 +423,52 @@ export interface paths {
 }
 
 export interface definitions {
+  index_checkpoint: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number
+    /** Format: text */
+    contract: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    updated_at: string
+    /** Format: bigint */
+    block: number
+  }
+  services: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number
+    /** Format: text */
+    key_manager: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at: string
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    updated_at: string
+    /** Format: text */
+    api_key?: string
+    /** Format: jsonb */
+    contracts?: string
+  }
   tasks: {
     /** Format: bigint */
     id: number
@@ -347,7 +495,7 @@ export interface definitions {
     /** Format: text */
     profile?: string
   }
-  services: {
+  users: {
     /**
      * Format: bigint
      * @description Note:
@@ -355,31 +503,7 @@ export interface definitions {
      */
     id: number
     /** Format: text */
-    key_manager: string
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at: string
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    updated_at: string
-    /** Format: text */
-    api_key?: string
-    /** Format: jsonb */
-    contracts?: string
-  }
-  index_checkpoint: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number
-    /** Format: text */
-    contract: string
+    profile: string
     /**
      * Format: timestamp with time zone
      * @default now()
@@ -391,7 +515,12 @@ export interface definitions {
      */
     updated_at: string
     /** Format: bigint */
-    block: number
+    quota_used: number
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    quota_start_date: string
   }
 }
 
@@ -428,6 +557,32 @@ export interface parameters {
   offset: string
   /** @description Limiting and Pagination */
   limit: string
+  /** @description index_checkpoint */
+  'body.index_checkpoint': definitions['index_checkpoint']
+  /** Format: bigint */
+  'rowFilter.index_checkpoint.id': string
+  /** Format: text */
+  'rowFilter.index_checkpoint.contract': string
+  /** Format: timestamp with time zone */
+  'rowFilter.index_checkpoint.created_at': string
+  /** Format: timestamp with time zone */
+  'rowFilter.index_checkpoint.updated_at': string
+  /** Format: bigint */
+  'rowFilter.index_checkpoint.block': string
+  /** @description services */
+  'body.services': definitions['services']
+  /** Format: bigint */
+  'rowFilter.services.id': string
+  /** Format: text */
+  'rowFilter.services.key_manager': string
+  /** Format: timestamp with time zone */
+  'rowFilter.services.created_at': string
+  /** Format: timestamp with time zone */
+  'rowFilter.services.updated_at': string
+  /** Format: text */
+  'rowFilter.services.api_key': string
+  /** Format: jsonb */
+  'rowFilter.services.contracts': string
   /** @description tasks */
   'body.tasks': definitions['tasks']
   /** Format: bigint */
@@ -444,30 +599,18 @@ export interface parameters {
   'rowFilter.tasks.key_manager': string
   /** Format: text */
   'rowFilter.tasks.profile': string
-  /** @description services */
-  'body.services': definitions['services']
+  /** @description users */
+  'body.users': definitions['users']
   /** Format: bigint */
-  'rowFilter.services.id': string
+  'rowFilter.users.id': string
   /** Format: text */
-  'rowFilter.services.key_manager': string
+  'rowFilter.users.profile': string
   /** Format: timestamp with time zone */
-  'rowFilter.services.created_at': string
+  'rowFilter.users.created_at': string
   /** Format: timestamp with time zone */
-  'rowFilter.services.updated_at': string
-  /** Format: text */
-  'rowFilter.services.api_key': string
-  /** Format: jsonb */
-  'rowFilter.services.contracts': string
-  /** @description index_checkpoint */
-  'body.index_checkpoint': definitions['index_checkpoint']
+  'rowFilter.users.updated_at': string
   /** Format: bigint */
-  'rowFilter.index_checkpoint.id': string
-  /** Format: text */
-  'rowFilter.index_checkpoint.contract': string
+  'rowFilter.users.quota_used': string
   /** Format: timestamp with time zone */
-  'rowFilter.index_checkpoint.created_at': string
-  /** Format: timestamp with time zone */
-  'rowFilter.index_checkpoint.updated_at': string
-  /** Format: bigint */
-  'rowFilter.index_checkpoint.block': string
+  'rowFilter.users.quota_start_date': string
 }

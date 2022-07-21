@@ -5,6 +5,7 @@ import { quota } from 'contracts/relayContractor'
 import { web3 } from 'api/utils/web3'
 import { executeTransaction } from 'api/common/execute'
 import { getKeyManagerAddress } from 'contracts/profile'
+import { requestUserQuota, updateUserQuota } from 'api/common/users'
 
 type RelayExecuteParameters = {
   address: string
@@ -16,19 +17,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const parameters = req.body as RelayExecuteParameters
     const profile = parameters.address
     const keyManager = await getKeyManagerAddress(web3, profile)
-    const { remaining: remainingQuota } = await quota(web3, profile)
-    if (remainingQuota.isZero()) {
-      return res.status(401).json({ error: 'Insufficient funds' })
+
+    // staking user
+    {
+      const { remaining: remainingQuota } = await quota(web3, profile)
+      if (!remainingQuota.isZero()) {
+        const { transactionHash } = await executeTransaction({
+          profile,
+          payeeProfile: profile,
+          keyManager,
+          ...parameters.transaction
+        })
+        return res.status(200).json({ transactionHash })
+      }
     }
 
-    const { transactionHash } = await executeTransaction({
-      profile,
-      payeeProfile: profile,
-      keyManager,
-      ...parameters.transaction
-    })
+    // monthly free user
+    {
+      const { quota, totalQuota } = await requestUserQuota(profile)
+      if (quota > 0) {
+        await updateUserQuota(profile, totalQuota - (quota - 1))
+        const { transactionHash } = await executeTransaction({
+          profile,
+          keyManager,
+          ...parameters.transaction
+        })
+        return res.status(200).json({ transactionHash })
+      }
+    }
 
-    return res.status(200).json({ transactionHash })
+    return res.status(401).json({ error: 'Insufficient quota' })
   } catch (e) {
     console.error(e)
     return res.status(400).json({ error: 'Internal' })

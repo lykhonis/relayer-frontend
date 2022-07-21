@@ -173,11 +173,27 @@ const Debug = () => {
         if (!response.ok) {
           throw new Error(data.error)
         }
-        console.log(data)
+        let suffix = ''
+        if (data.unit === 'lyx') {
+          suffix = 'LYX'
+        } else if (data.unit === 'transactionCount') {
+          suffix = 'transactions'
+        }
+        let resetDate
+        if (data.resetDate) {
+          resetDate = new Date(data.resetDate)
+        }
         addToast({
           title: 'Profile Quota',
-          description: JSON.stringify(data, null, 2),
-          type: 'success'
+          description: (
+            <ul>
+              <li>Quota: {`${data.quota} ${suffix}`}</li>
+              <li>Total: {`${data.totalQuota} ${suffix}`}</li>
+              {resetDate && <li>Reset: {`${resetDate.toDateString()}`}</li>}
+            </ul>
+          ),
+          type: 'success',
+          closeAfter: 10_000
         })
       } catch (e: any) {
         console.error(e)

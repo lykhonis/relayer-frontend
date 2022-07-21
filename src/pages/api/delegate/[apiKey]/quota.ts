@@ -11,16 +11,16 @@ import { getProfileAddress } from 'contracts/keyManager'
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const apiKey = req.query.apiKey as string
-    const profile = req.body.address
+    const profile = req.body.address as string
     const timestamp = Number(req.body.timestamp)
-    const signature = req.body.signature
+    const signature = req.body.signature as string
 
     if (!profile || !signature || Number.isNaN(timestamp)) {
       return res.status(400).json({ error: 'Invalid request' })
     }
 
     if (Math.abs(new Date().getTime() - timestamp) > 5000) {
-      return res.status(401).json({ error: 'Request is too old' })
+      return res.status(400).json({ error: 'Invalid request' })
     }
 
     const { data: payee, error: payeeError } = await supabase

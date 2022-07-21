@@ -37,7 +37,7 @@ export const executeTransaction = async ({
   abi: string
   signature: string
   nonce: number
-  payeeProfile: string
+  payeeProfile?: string
 }) => {
   const { transactionHash, send: sendRelayCallTx } = await executeRelayCall({
     web3,
@@ -77,8 +77,10 @@ export const executeTransaction = async ({
     }
   }
 
-  console.log(`submitting transaction: ${transactionHash}`)
-  await submitTransaction(payeeProfile, transactionHash)
+  if (payeeProfile) {
+    console.log(`submitting transaction: ${transactionHash}`)
+    await submitTransaction(payeeProfile, transactionHash)
+  }
 
   executeRelay()
   return { transactionHash }

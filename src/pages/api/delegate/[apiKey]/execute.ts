@@ -39,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const payeeProfile = await getProfileAddress(web3, payeeKeyManager)
     const { remaining: remainingQuota } = await quota(web3, payeeProfile)
     if (remainingQuota.isZero()) {
-      return res.status(401).json({ error: 'Insufficient funds' })
+      return res.status(401).json({ error: 'Insufficient quota' })
     }
 
     const contracts: ServiceContract[] = payee.contracts ? JSON.parse(payee.contracts) : []
