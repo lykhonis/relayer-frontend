@@ -4,7 +4,7 @@ import { supabase } from 'api/utils/supabase'
 import Web3 from 'web3'
 import { definitions } from 'types/supabase'
 
-export const submitTransaction = async (profile: string, transactionHash: string) => {
+export const submitTransaction = async (profile: string | undefined, transactionHash: string) => {
   const data = { profile, transactionHash }
   const hash = Web3.utils.sha3(JSON.stringify(data)) as string
   const signature = await web3.eth.sign(hash, web3.eth.defaultAccount as string)
@@ -77,10 +77,8 @@ export const executeTransaction = async ({
     }
   }
 
-  if (payeeProfile) {
-    console.log(`submitting transaction: ${transactionHash}`)
-    await submitTransaction(payeeProfile, transactionHash)
-  }
+  console.log(`submitting transaction: ${transactionHash}`)
+  await submitTransaction(payeeProfile, transactionHash)
 
   executeRelay()
   return { transactionHash }
