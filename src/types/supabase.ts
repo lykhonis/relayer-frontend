@@ -12,15 +12,17 @@ export interface paths {
       }
     }
   }
-  '/index_checkpoint': {
+  '/tasks': {
     get: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.index_checkpoint.id']
-          contract?: parameters['rowFilter.index_checkpoint.contract']
-          created_at?: parameters['rowFilter.index_checkpoint.created_at']
-          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
-          block?: parameters['rowFilter.index_checkpoint.block']
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
           /** Filtering Columns */
           select?: parameters['select']
           /** Ordering */
@@ -42,7 +44,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions['index_checkpoint'][]
+          schema: definitions['tasks'][]
         }
         /** Partial Content */
         206: unknown
@@ -51,8 +53,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** index_checkpoint */
-          index_checkpoint?: definitions['index_checkpoint']
+          /** tasks */
+          tasks?: definitions['tasks']
         }
         query: {
           /** Filtering Columns */
@@ -71,11 +73,13 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.index_checkpoint.id']
-          contract?: parameters['rowFilter.index_checkpoint.contract']
-          created_at?: parameters['rowFilter.index_checkpoint.created_at']
-          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
-          block?: parameters['rowFilter.index_checkpoint.block']
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
         }
         header: {
           /** Preference */
@@ -90,15 +94,17 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.index_checkpoint.id']
-          contract?: parameters['rowFilter.index_checkpoint.contract']
-          created_at?: parameters['rowFilter.index_checkpoint.created_at']
-          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
-          block?: parameters['rowFilter.index_checkpoint.block']
+          id?: parameters['rowFilter.tasks.id']
+          created_at?: parameters['rowFilter.tasks.created_at']
+          updated_at?: parameters['rowFilter.tasks.updated_at']
+          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
+          status?: parameters['rowFilter.tasks.status']
+          key_manager?: parameters['rowFilter.tasks.key_manager']
+          profile?: parameters['rowFilter.tasks.profile']
         }
         body: {
-          /** index_checkpoint */
-          index_checkpoint?: definitions['index_checkpoint']
+          /** tasks */
+          tasks?: definitions['tasks']
         }
         header: {
           /** Preference */
@@ -213,18 +219,15 @@ export interface paths {
       }
     }
   }
-  '/tasks': {
+  '/index_checkpoint': {
     get: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          uuid?: parameters['rowFilter.tasks.uuid']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          profile?: parameters['rowFilter.tasks.profile']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
           /** Filtering Columns */
           select?: parameters['select']
           /** Ordering */
@@ -246,7 +249,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions['tasks'][]
+          schema: definitions['index_checkpoint'][]
         }
         /** Partial Content */
         206: unknown
@@ -255,8 +258,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** tasks */
-          tasks?: definitions['tasks']
+          /** index_checkpoint */
+          index_checkpoint?: definitions['index_checkpoint']
         }
         query: {
           /** Filtering Columns */
@@ -275,14 +278,11 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          uuid?: parameters['rowFilter.tasks.uuid']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          profile?: parameters['rowFilter.tasks.profile']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
         }
         header: {
           /** Preference */
@@ -297,18 +297,15 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters['rowFilter.tasks.id']
-          created_at?: parameters['rowFilter.tasks.created_at']
-          updated_at?: parameters['rowFilter.tasks.updated_at']
-          uuid?: parameters['rowFilter.tasks.uuid']
-          transaction_hash?: parameters['rowFilter.tasks.transaction_hash']
-          status?: parameters['rowFilter.tasks.status']
-          key_manager?: parameters['rowFilter.tasks.key_manager']
-          profile?: parameters['rowFilter.tasks.profile']
+          id?: parameters['rowFilter.index_checkpoint.id']
+          contract?: parameters['rowFilter.index_checkpoint.contract']
+          created_at?: parameters['rowFilter.index_checkpoint.created_at']
+          updated_at?: parameters['rowFilter.index_checkpoint.updated_at']
+          block?: parameters['rowFilter.index_checkpoint.block']
         }
         body: {
-          /** tasks */
-          tasks?: definitions['tasks']
+          /** index_checkpoint */
+          index_checkpoint?: definitions['index_checkpoint']
         }
         header: {
           /** Preference */
@@ -324,15 +321,9 @@ export interface paths {
 }
 
 export interface definitions {
-  index_checkpoint: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
+  tasks: {
+    /** Format: bigint */
     id: number
-    /** Format: text */
-    contract: string
     /**
      * Format: timestamp with time zone
      * @default now()
@@ -342,9 +333,19 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    updated_at: string
-    /** Format: bigint */
-    block: number
+    updated_at?: string
+    /** Format: text */
+    transaction_hash: string
+    /**
+     * Format: public.tasks_status
+     * @default unknown
+     * @enum {string}
+     */
+    status: 'unknown' | 'pending' | 'completed' | 'failed'
+    /** Format: text */
+    key_manager: string
+    /** Format: text */
+    profile?: string
   }
   services: {
     /**
@@ -370,9 +371,15 @@ export interface definitions {
     /** Format: jsonb */
     contracts?: string
   }
-  tasks: {
-    /** Format: bigint */
+  index_checkpoint: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
     id: number
+    /** Format: text */
+    contract: string
     /**
      * Format: timestamp with time zone
      * @default now()
@@ -382,21 +389,9 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    updated_at?: string
-    /** Format: text */
-    uuid: string
-    /** Format: text */
-    transaction_hash: string
-    /**
-     * Format: public.tasks_status
-     * @default unknown
-     * @enum {string}
-     */
-    status: 'unknown' | 'pending' | 'completed' | 'failed'
-    /** Format: text */
-    key_manager: string
-    /** Format: text */
-    profile?: string
+    updated_at: string
+    /** Format: bigint */
+    block: number
   }
 }
 
@@ -433,18 +428,22 @@ export interface parameters {
   offset: string
   /** @description Limiting and Pagination */
   limit: string
-  /** @description index_checkpoint */
-  'body.index_checkpoint': definitions['index_checkpoint']
+  /** @description tasks */
+  'body.tasks': definitions['tasks']
   /** Format: bigint */
-  'rowFilter.index_checkpoint.id': string
+  'rowFilter.tasks.id': string
+  /** Format: timestamp with time zone */
+  'rowFilter.tasks.created_at': string
+  /** Format: timestamp with time zone */
+  'rowFilter.tasks.updated_at': string
   /** Format: text */
-  'rowFilter.index_checkpoint.contract': string
-  /** Format: timestamp with time zone */
-  'rowFilter.index_checkpoint.created_at': string
-  /** Format: timestamp with time zone */
-  'rowFilter.index_checkpoint.updated_at': string
-  /** Format: bigint */
-  'rowFilter.index_checkpoint.block': string
+  'rowFilter.tasks.transaction_hash': string
+  /** Format: public.tasks_status */
+  'rowFilter.tasks.status': string
+  /** Format: text */
+  'rowFilter.tasks.key_manager': string
+  /** Format: text */
+  'rowFilter.tasks.profile': string
   /** @description services */
   'body.services': definitions['services']
   /** Format: bigint */
@@ -459,22 +458,16 @@ export interface parameters {
   'rowFilter.services.api_key': string
   /** Format: jsonb */
   'rowFilter.services.contracts': string
-  /** @description tasks */
-  'body.tasks': definitions['tasks']
+  /** @description index_checkpoint */
+  'body.index_checkpoint': definitions['index_checkpoint']
   /** Format: bigint */
-  'rowFilter.tasks.id': string
+  'rowFilter.index_checkpoint.id': string
+  /** Format: text */
+  'rowFilter.index_checkpoint.contract': string
   /** Format: timestamp with time zone */
-  'rowFilter.tasks.created_at': string
+  'rowFilter.index_checkpoint.created_at': string
   /** Format: timestamp with time zone */
-  'rowFilter.tasks.updated_at': string
-  /** Format: text */
-  'rowFilter.tasks.uuid': string
-  /** Format: text */
-  'rowFilter.tasks.transaction_hash': string
-  /** Format: public.tasks_status */
-  'rowFilter.tasks.status': string
-  /** Format: text */
-  'rowFilter.tasks.key_manager': string
-  /** Format: text */
-  'rowFilter.tasks.profile': string
+  'rowFilter.index_checkpoint.updated_at': string
+  /** Format: bigint */
+  'rowFilter.index_checkpoint.block': string
 }
