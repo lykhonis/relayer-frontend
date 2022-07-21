@@ -185,7 +185,9 @@ const Service = () => {
     }
   }, [pendingRemoval, data?.contracts, mutate, updateContracts])
 
-  const url = data?.apiKey ? `${window.location.origin}/api/execute/${data.apiKey}` : undefined
+  const url = data?.apiKey
+    ? `${window.location.origin}/api/delegate/${data.apiKey}/execute`
+    : undefined
 
   const handleCopyUrl = useCallback(() => {
     if (clipboard && url) {

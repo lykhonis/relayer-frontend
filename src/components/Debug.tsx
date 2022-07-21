@@ -105,18 +105,21 @@ const Debug = () => {
 
         const { signature } = (await web3.eth.sign(hash, profile.address)) as any
 
-        const response = await fetch(serviceKey ? `api/execute/${serviceKey}` : 'api/execute', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address: profile.address,
-            transaction: {
-              abi,
-              nonce,
-              signature
-            }
-          })
-        })
+        const response = await fetch(
+          serviceKey ? `api/delegate/${serviceKey}/execute` : 'api/execute',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              address: profile.address,
+              transaction: {
+                abi,
+                nonce,
+                signature
+              }
+            })
+          }
+        )
 
         const data = await response.json()
         console.log(`${response.status}: ${response.statusText}`)
@@ -151,13 +154,16 @@ const Debug = () => {
         const timestamp = new Date().getTime()
         const message = Web3.utils.sha3(profile.address + timestamp) as string
         const { signature } = (await web3.eth.sign(message, profile.address)) as any
-        const response = await fetch(`/api/quota`, {
-          method: 'get',
-          headers: {
-            'Accept-Type': 'application/json',
-            Authorization: `address=${profile.address},timestamp=${timestamp},signature=${signature}`
+        const response = await fetch(
+          serviceKey ? `api/delegate/${serviceKey}/quota` : 'api/quota',
+          {
+            method: 'get',
+            headers: {
+              'Accept-Type': 'application/json',
+              Authorization: `address=${profile.address},timestamp=${timestamp},signature=${signature}`
+            }
           }
-        })
+        )
         const data = await response.json()
         if (!response.ok) {
           throw new Error(data.error)
@@ -179,7 +185,7 @@ const Debug = () => {
         setLoading(false)
       }
     }
-  }, [web3, profile?.address, addToast])
+  }, [web3, profile?.address, serviceKey, addToast])
 
   return (
     <>
