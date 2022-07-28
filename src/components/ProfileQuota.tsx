@@ -24,11 +24,22 @@ const ProfileQuota = () => {
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchQuota = async () => {
       try {
         if (web3 && profile?.address) {
           const { remaining, used } = await relayQuota(web3, profile?.address)
           const balance = await rewardBalanceOf(web3, profile?.address)
+          if (remaining.isZero() && balance.isZero()) {
+            const response = await fetch(`api/quota/${profile.address}`, {
+              method: 'get',
+              headers: { 'Accept-Type': 'application/json' }
+            })
+            if (response.ok) {
+              const data = await response.json()
+              setQuota(data)
+              return
+            }
+          }
           const y = new BN(1e10)
           const yUsed = used.div(y).toNumber()
           const yRemaining = remaining.div(y).toNumber()
@@ -43,7 +54,7 @@ const ProfileQuota = () => {
         console.error(e)
       }
     }
-    fetch()
+    fetchQuota()
   }, [web3, profile?.address])
 
   const handleIncreaseQuota = useCallback(async () => {
