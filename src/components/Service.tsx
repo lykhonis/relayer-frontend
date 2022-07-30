@@ -55,7 +55,7 @@ const Service = () => {
         setLoading(true)
         const keyManager = await getKeyManagerAddress(web3, profile.address)
         const salt = Web3.utils.randomHex(32)
-        const hash = Web3.utils.sha3(keyManager + salt) as string
+        const hash = Web3.utils.soliditySha3(keyManager, salt) as string
         const { signature } = (await web3.eth.sign(
           Messages.Request.GenerateKey(hash),
           profile.address
@@ -101,7 +101,11 @@ const Service = () => {
           setLoading(true)
           const keyManager = await getKeyManagerAddress(web3, profile.address)
           const salt = Web3.utils.randomHex(32)
-          const hash = Web3.utils.sha3(keyManager + JSON.stringify(newContracts) + salt) as string
+          const hash = Web3.utils.soliditySha3(
+            keyManager,
+            JSON.stringify(newContracts),
+            salt
+          ) as string
           const { signature } = (await web3.eth.sign(
             Messages.Request.ApproveServiceContract(hash),
             profile.address

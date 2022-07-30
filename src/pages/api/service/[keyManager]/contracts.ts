@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const keyManager = req.query.keyManager as string
     const { salt, signature, contracts } = req.body
-    const hash = Web3.utils.sha3(keyManager + JSON.stringify(contracts) + salt) as string
+    const hash = Web3.utils.soliditySha3(keyManager, JSON.stringify(contracts), salt) as string
     const controller = web3.eth.accounts.recover(
       Messages.Request.ApproveServiceContract(hash),
       signature
