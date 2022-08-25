@@ -64,8 +64,7 @@ const Debug = () => {
     if (web3) {
       try {
         setLoading(true)
-        const chainId = await web3.eth.getChainId()
-        await configureRelayerService(web3, [chainId], serviceKey)
+        await configureRelayerService(web3, { serviceKey })
       } catch (e: any) {
         console.error(e)
       } finally {

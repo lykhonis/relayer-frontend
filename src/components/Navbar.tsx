@@ -11,27 +11,34 @@ import { ipfsToHttp } from 'utils/ipfs'
 import { Transition, Popover } from '@headlessui/react'
 import { useClipboard } from 'use-clipboard-copy'
 import { useToast } from '@apideck/components'
+import useWeb3 from 'hooks/useWeb3'
+import { configureRelayerService } from 'utils/lukso'
 
 export const Navbar = () => {
+  const web3 = useWeb3()
   const navbarNode = useRef() as RefObject<HTMLDivElement>
   const hamburgerNode = useRef() as RefObject<HTMLDivElement>
   const [navbarOpen, setNavbarOpen] = useState(false)
   const router = useRouter()
   const { profile, isLoading, requestProfile, removeProfile } = useProfile()
+
   const profileImage = findBestProfileImage({
     images: profile?.profileImage,
     minimumWidth: 32,
     minimumHeight: 32
   })
+
   const { addToast } = useToast()
   const { name: networkName } = useNetwork()
   const clipboard = useClipboard()
+
   const handleCopyAddress = useCallback(() => {
     if (clipboard && profile?.address) {
       clipboard.copy(profile.address)
       addToast({ title: 'Copied', type: 'success' })
     }
   }, [profile?.address, clipboard, addToast])
+
   return (
     <nav className={profile || isLoading ? 'bg-white border-b-2 border-gray-100' : 'bg-gray-900'}>
       <div className="px-4 sm:px-6 lg:px-6 max-w-7xl mx-auto">
@@ -195,6 +202,16 @@ export const Navbar = () => {
                             <a
                               className="-m-3 p-3 flex items-start cursor-pointer rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
                               onClick={() => {
+                                if (web3) {
+                                  configureRelayerService(web3)
+                                }
+                              }}
+                            >
+                              Configure Relayer
+                            </a>
+                            <a
+                              className="-m-3 p-3 flex items-start cursor-pointer rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
+                              onClick={() => {
                                 router.replace('/')
                                 removeProfile?.()
                               }}
@@ -271,6 +288,16 @@ export const Navbar = () => {
               </a>
             </Link>
             <div className="border-t border-gray-200 mt-2 py-1" />
+            <a
+              className="cursor-pointer block px-3 py-2 mt-1 text-base font-semibold text-gray-900 rounded-md hover:text-primary-700 hover:bg-gray-100 focus:outline-none focus:text-primary-700 focus:bg-gray-100"
+              onClick={() => {
+                if (web3) {
+                  configureRelayerService(web3)
+                }
+              }}
+            >
+              Configure Relayer
+            </a>
             <a
               className="cursor-pointer block px-3 py-2 mt-1 text-base font-semibold text-gray-900 rounded-md hover:text-primary-700 hover:bg-gray-100 focus:outline-none focus:text-primary-700 focus:bg-gray-100"
               onClick={() => {
