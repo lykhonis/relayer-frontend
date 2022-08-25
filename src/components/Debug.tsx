@@ -9,6 +9,7 @@ import { fee as relayerFee } from 'contracts/relayContractor'
 import useProfile from 'hooks/useProfile'
 import { getContract as getProfileContract, getKeyManagerAddress } from 'contracts/profile'
 import { getContract as getKeyManagerContract } from 'contracts/keyManager'
+import { configureRelayerService } from 'utils/lukso'
 
 const DebugProfileDataKey = Web3.utils.keccak256('RelayerService:Profile:DebugData')
 
@@ -58,6 +59,20 @@ const Debug = () => {
     }
     fetch()
   }, [web3, profile?.address])
+
+  const handleConfigureRelayService = useCallback(async () => {
+    if (web3) {
+      try {
+        setLoading(true)
+        const chainId = await web3.eth.getChainId()
+        await configureRelayerService(web3, [chainId], serviceKey)
+      } catch (e: any) {
+        console.error(e)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [web3, serviceKey])
 
   const handleUpdateProfileData = useCallback(async () => {
     if (web3 && profile?.address) {
@@ -298,6 +313,18 @@ const Debug = () => {
                 variant="outline"
                 text="Update"
                 onClick={handleUpdateProfileData}
+                disabled={loading}
+              />
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm text-gray-500">Configure Relay Service</dt>
+            <dd className="mt-2">
+              <Button
+                variant="outline"
+                text="Configure"
+                onClick={handleConfigureRelayService}
                 disabled={loading}
               />
             </dd>
